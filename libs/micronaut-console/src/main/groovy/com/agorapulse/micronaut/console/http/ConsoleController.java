@@ -30,6 +30,7 @@ import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.hateoas.JsonError;
 
+import javax.annotation.Nullable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedHashMap;
@@ -51,8 +52,8 @@ public class ConsoleController {
     }
 
     @Post("/execute")
-    public ExecutionResult execute(@Body String body, @Header("Content-Type") String contentType, User user) {
-        String language = languages.get(contentType);
+    public ExecutionResult execute(@Body String body, @Nullable @Header("Content-Type") String contentType, User user) {
+        String language = languages.getOrDefault(contentType, languages.keySet().stream().findFirst().orElse(null));
 
         return new ExecutionResult(service.execute(new Script(language, body, user)));
     }

@@ -34,11 +34,13 @@ dependencies {
     compileOnly "io.micronaut:micronaut-inject-groovy"
 
     compileOnly 'io.micronaut:micronaut-http'
+    compileOnly 'io.micronaut:micronaut-function'
 
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
 
     testCompile "io.micronaut:micronaut-inject-groovy"
     testCompile "io.micronaut:micronaut-http-server-netty"
+    testCompile 'io.micronaut:micronaut-function-web'
 
     testCompile("org.spockframework:spock-core") {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
