@@ -18,33 +18,16 @@
 package com.agorapulse.micronaut.console;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * The engine which can execute the script.
- *
- * Different engines exist for the different languages.
+ * Provides one or more console engines.
  */
-public interface ConsoleEngine {
+public interface ConsoleEngineFactory {
 
     /**
-     * Executes the script.
-     *
-     * @param code the body of the script
-     * @param bindings the map of objects available for the script
-     *
-     * @return the execution result
+     * Creates console engines.
+     * @return the list of console engines
      */
-    ExecutionResult execute(String code, Map<String, Object> bindings) throws Throwable;
-
-    /**
-     * @return the language supported by this engine
-     */
-    String getLanguage();
-
-    /**
-     * @return the supported mime types representing this language
-     */
-    List<String> getSupportedMimeTypes();
+    List<ConsoleEngine> getEngines();
 
 }

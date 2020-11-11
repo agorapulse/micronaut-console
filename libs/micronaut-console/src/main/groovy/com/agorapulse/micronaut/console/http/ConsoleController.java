@@ -17,53 +17,68 @@
  */
 package com.agorapulse.micronaut.console.http;
 
-import com.agorapulse.micronaut.console.ConsoleEngine;
 import com.agorapulse.micronaut.console.ConsoleException;
 import com.agorapulse.micronaut.console.ConsoleService;
+import com.agorapulse.micronaut.console.ExecutionResult;
 import com.agorapulse.micronaut.console.Script;
+import com.agorapulse.micronaut.console.ConsoleSecurityException;
 import com.agorapulse.micronaut.console.User;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.hateoas.JsonError;
 
 import javax.annotation.Nullable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller("${console.path:/console}")
 public class ConsoleController {
 
-    private final Map<String, String> languages;
     private final ConsoleService service;
 
-    public ConsoleController(List<ConsoleEngine> engines, ConsoleService service) {
+    public ConsoleController(ConsoleService service) {
         this.service = service;
-
-        Map<String, String> languages = new LinkedHashMap<>();
-        engines.forEach(e -> e.getSupportedMimeTypes().forEach(m -> languages.put(m, e.getLanguage())));
-        this.languages = languages;
     }
 
     @Post("/execute")
+    @Consumes(MediaType.ALL)
+    @Produces(MediaType.APPLICATION_JSON)
     public ExecutionResult execute(@Body String body, @Nullable @Header("Content-Type") String contentType, User user) {
-        String language = languages.getOrDefault(contentType, languages.keySet().stream().findFirst().orElse(null));
+        return service.execute(new Script(service.getLanguageForMimeType(contentType), body, user));
+    }
 
-        return new ExecutionResult(service.execute(new Script(language, body, user)));
+    @Post("/execute/result")
+    @Consumes(MediaType.ALL)
+    @Produces(MediaType.TEXT_PLAIN)
+    public HttpResponse<String> executeAndReturnText(@Body String body, @Nullable @Header("Content-Type") String contentType, User user) {
+        try {
+            return HttpResponse.ok(service.execute(new Script(service.getLanguageForMimeType(contentType), body, user)).toString());
+        } catch (ConsoleException e) {
+            return HttpResponse.badRequest(extractMessage(e) + "\n\n" + e.getScript());
+        }
     }
 
     @Error(ConsoleException.class)
     public HttpResponse<JsonError> consoleException(ConsoleException exception) {
+        ScriptJsonError error = new ScriptJsonError(exception.getScript(), extractMessage(exception));
+        if (exception instanceof ConsoleSecurityException) {
+            return HttpResponse.unauthorized();
+        }
+        return HttpResponse.badRequest(error);
+    }
+
+    private String extractMessage(ConsoleException exception) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         exception.printStackTrace(pw);
-        return HttpResponse.badRequest(new JsonError(sw.toString()));
+        return sw.toString();
     }
 
 }

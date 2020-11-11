@@ -15,27 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agorapulse.micronaut.console;
+print("This is a JS debug message");
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-/**
- * The script executor service.
- */
-public interface ConsoleService {
-
-    /**
-     * Executes the script
-     * @param script the script
-     * @return the result of the script as String
-     */
-    @Nonnull ExecutionResult execute(Script script);
-
-    /**
-     * Returns the language based on the content type.
-     * @param contentType the content type of the script
-     * @return the language of the script
-     */
-    @Nullable String getLanguageForMimeType(@Nullable String contentType);
-}
+"Hello JS Developer!"

@@ -15,18 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agorapulse.micronaut.console.http;
+package com.agorapulse.micronaut.console;
 
-public class ExecutionResult {
+public class ConsoleSecurityException extends ConsoleException {
 
-    private final String result;
-
-    public ExecutionResult(String result) {
-        this.result = result;
-    }
-
-    public String getResult() {
-        return result;
+    public ConsoleSecurityException(Script script, String message) {
+        super(script, message);
     }
 
 }

@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-@FunctionBean(value = "${console.function:console}\"", method = "apply")
+@FunctionBean(value = "console", method = "apply")
 public class ConsoleHandler extends FunctionInitializer implements UnaryOperator<String> {
 
     @Inject private ConsoleService consoleService;
@@ -46,7 +46,7 @@ public class ConsoleHandler extends FunctionInitializer implements UnaryOperator
                logGroupName + "/" + logStreamName
             ));
 
-        return consoleService.execute(script);
+        return consoleService.execute(script).toString();
     }
 
     public ConsoleHandler() { }

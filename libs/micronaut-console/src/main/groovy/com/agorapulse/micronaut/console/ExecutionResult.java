@@ -17,44 +17,30 @@
  */
 package com.agorapulse.micronaut.console;
 
-/**
- * The representation of the script.
- */
-public class Script {
+public class ExecutionResult {
 
-    private final String language;
-    private final String body;
-    private final User user;
+    private final Object result;
+    private final String out;
 
-    public Script(String language, String body, User user) {
-        this.language = language;
-        this.body = body;
-        this.user = user;
+    public ExecutionResult(Object result, String out) {
+        this.result = result;
+        this.out = out;
     }
 
-    /**
-     * @return the language of the script
-     */
-    public String getLanguage() {
-        return language;
+    public Object getResult() {
+        return result;
     }
 
-    /**
-     * @return the body of the script
-     */
-    public String getBody() {
-        return body;
-    }
-
-    /**
-     * @return the user asking for the script execution
-     */
-    public User getUser() {
-        return user;
+    public String getOut() {
+        return out;
     }
 
     @Override
     public String toString() {
-        return "Language: " + language + "\nUser: " + user + "\n\n" + body;
+        if (out.length() > 0) {
+            return "# Out #\n" + out + "\n# Result #\n" + result + "\n";
+        }
+
+        return String.valueOf(result);
     }
 }

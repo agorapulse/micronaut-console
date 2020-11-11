@@ -28,26 +28,20 @@ public interface AuditService {
      * Logs the execution of the script before it is executed.
      * @param script the script
      */
-    default void beforeExecute(Script script, Map<String, Object> bindings) {
-        // noop
-    }
+    default void beforeExecute(Script script, Map<String, Object> bindings) { }
 
     /**
      * Logs the execution of the script after it is executed.
      * @param script the script
      * @param result the execution result
      */
-    default void afterExecute(Script script, String result) {
-        // noop
-    }
+    default void afterExecute(Script script, ExecutionResult result) { }
 
     /**
      * Logs the error which happened during the execution.
      * @param script the script
      * @param throwable the executed error
      */
-    default void onError(Script script, Throwable throwable) {
-        // noop
-    }
+    default void onError(Script script, Throwable throwable) { }
 
 }

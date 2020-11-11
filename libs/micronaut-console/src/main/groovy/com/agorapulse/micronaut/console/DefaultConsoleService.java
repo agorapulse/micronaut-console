@@ -17,6 +17,8 @@
  */
 package com.agorapulse.micronaut.console;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -35,25 +37,23 @@ public class DefaultConsoleService implements ConsoleService {
         List<AuditService> auditServices,
         List<BindingProvider> bindingProviders,
         List<SecurityAdvisor> securityAdvisors,
-        List<ConsoleEngine> engines
+        List<ConsoleEngineFactory> engines
     ) {
         this.auditServices = auditServices;
         this.bindingProviders = bindingProviders;
         this.securityAdvisors = securityAdvisors;
 
         Map<String, ConsoleEngine> map = new HashMap<>();
-        for (ConsoleEngine e : engines) {
-            map.put(e.getLanguage(), e);
-        }
+        engines.forEach(f -> f.getEngines().forEach(e -> map.put(e.getLanguage(), e)));
 
         this.engines = map;
     }
 
-    @Override
-    public String execute(Script script) {
+    @Override @Nonnull
+    public ExecutionResult execute(Script script) {
         for (SecurityAdvisor a : securityAdvisors) {
             if (!a.isExecutionAllowed(script)) {
-                throw new ConsoleException(script, "Execution forbidden by " + a);
+                throw new ConsoleSecurityException(script, "Execution forbidden by " + a);
             };
         }
 
@@ -71,12 +71,22 @@ public class DefaultConsoleService implements ConsoleService {
         auditServices.forEach(a -> a.beforeExecute(script, bindings));
 
         try {
-            String result = engine.execute(script.getBody(), bindings);
+            ExecutionResult result = engine.execute(script.getBody(), bindings);
             auditServices.forEach(a -> a.afterExecute(script, result));
             return result;
         } catch (Throwable throwable) {
             auditServices.forEach(a -> a.onError(script, throwable));
             throw new ConsoleException(script, "Exception during script execution", throwable);
         }
+    }
+
+    @Override @Nullable
+    public String getLanguageForMimeType(@Nullable String contentType) {
+        for (ConsoleEngine engine : engines.values()) {
+            if (engine.getSupportedMimeTypes().contains(contentType)) {
+                return engine.getLanguage();
+            }
+        }
+        return null;
     }
 }

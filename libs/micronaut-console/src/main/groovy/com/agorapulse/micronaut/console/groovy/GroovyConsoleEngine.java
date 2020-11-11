@@ -18,6 +18,7 @@
 package com.agorapulse.micronaut.console.groovy;
 
 import com.agorapulse.micronaut.console.ConsoleEngine;
+import com.agorapulse.micronaut.console.ExecutionResult;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import io.micronaut.context.annotation.Requires;
@@ -30,7 +31,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 
 @Singleton
 @Requires(classes = GroovyShell.class)
@@ -46,7 +46,7 @@ public class GroovyConsoleEngine implements ConsoleEngine {
     }
 
     @Override
-    public String execute(String code, Map<String, Object> bindings) {
+    public ExecutionResult execute(String code, Map<String, Object> bindings) {
         StringWriter sw = new StringWriter();
         PrintWriter writer = new PrintWriter(sw);
 
@@ -60,13 +60,7 @@ public class GroovyConsoleEngine implements ConsoleEngine {
 
         Object result = groovyShell.evaluate(code);
 
-        String prints = sw.toString();
-
-        if (prints.length() > 0) {
-            return "# Out #\n" + prints + "\n# Result #\n" + result;
-        }
-
-        return String.valueOf(result);
+        return new ExecutionResult(result, sw.toString());
     }
 
     @Override

@@ -15,27 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agorapulse.micronaut.console;
+package com.agorapulse.micronaut.console.http;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.agorapulse.micronaut.console.Script;
+import com.agorapulse.micronaut.console.SecurityAdvisor;
 
-/**
- * The script executor service.
- */
-public interface ConsoleService {
+import javax.inject.Singleton;
 
-    /**
-     * Executes the script
-     * @param script the script
-     * @return the result of the script as String
-     */
-    @Nonnull ExecutionResult execute(Script script);
+@Singleton
+public class MagicAdvisor implements SecurityAdvisor {
 
-    /**
-     * Returns the language based on the content type.
-     * @param contentType the content type of the script
-     * @return the language of the script
-     */
-    @Nullable String getLanguageForMimeType(@Nullable String contentType);
+    @Override
+    public boolean isExecutionAllowed(Script script) {
+        return !script.getBody().contains("Voldemort");
+    }
+
 }

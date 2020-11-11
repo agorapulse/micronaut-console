@@ -17,34 +17,24 @@
  */
 package com.agorapulse.micronaut.console;
 
+import javax.inject.Singleton;
 import java.util.List;
-import java.util.Map;
 
 /**
- * The engine which can execute the script.
- *
- * Different engines exist for the different languages.
+ * Default implementation of the console engine factory simply collects the instances from the application context.
  */
-public interface ConsoleEngine {
+@Singleton
+public class DefaultConsoleEngineFactory implements ConsoleEngineFactory {
 
-    /**
-     * Executes the script.
-     *
-     * @param code the body of the script
-     * @param bindings the map of objects available for the script
-     *
-     * @return the execution result
-     */
-    ExecutionResult execute(String code, Map<String, Object> bindings) throws Throwable;
+    private final List<ConsoleEngine> engines;
 
-    /**
-     * @return the language supported by this engine
-     */
-    String getLanguage();
+    public DefaultConsoleEngineFactory(List<ConsoleEngine> engines) {
+        this.engines = engines;
+    }
 
-    /**
-     * @return the supported mime types representing this language
-     */
-    List<String> getSupportedMimeTypes();
+    @Override
+    public List<ConsoleEngine> getEngines() {
+        return engines;
+    }
 
 }

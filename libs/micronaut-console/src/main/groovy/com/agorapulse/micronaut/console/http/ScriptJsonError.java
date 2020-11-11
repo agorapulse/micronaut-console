@@ -15,27 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agorapulse.micronaut.console;
+package com.agorapulse.micronaut.console.http;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.agorapulse.micronaut.console.Script;
+import io.micronaut.http.hateoas.JsonError;
 
-/**
- * The script executor service.
- */
-public interface ConsoleService {
+public class ScriptJsonError extends JsonError {
 
-    /**
-     * Executes the script
-     * @param script the script
-     * @return the result of the script as String
-     */
-    @Nonnull ExecutionResult execute(Script script);
+    private final Script script;
 
-    /**
-     * Returns the language based on the content type.
-     * @param contentType the content type of the script
-     * @return the language of the script
-     */
-    @Nullable String getLanguageForMimeType(@Nullable String contentType);
+    public ScriptJsonError(Script script, String message) {
+        super(message);
+        this.script = script;
+    }
+
+    public Script getScript() {
+        return script;
+    }
+
 }

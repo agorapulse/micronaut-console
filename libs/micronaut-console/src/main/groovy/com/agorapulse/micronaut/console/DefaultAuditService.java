@@ -38,9 +38,9 @@ public class DefaultAuditService implements AuditService {
     }
 
     @Override
-    public void afterExecute(Script script, String result) {
+    public void afterExecute(Script script, ExecutionResult result) {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Before execution:\n" + script);
+            LOGGER.debug("After execution:\n" + script + "\n\nResult:\n" + result);
         }
     }
 
