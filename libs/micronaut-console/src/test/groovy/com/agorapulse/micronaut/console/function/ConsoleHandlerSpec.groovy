@@ -42,10 +42,8 @@ class ConsoleHandlerSpec extends Specification {
     void 'execute script with exception'() {
         given:
             String errorResult = handler.apply(fixt.readText('error.groovy'))
-            // this is bit brittle, use the following line to regenerate the file
-            // fixt.writeText('error.txt', errorResult)
         expect:
-            errorResult == fixt.readText('error.txt')
+            errorResult.startsWith('com.agorapulse.micronaut.console.ConsoleException: Exception during script execution')
     }
 
 }
