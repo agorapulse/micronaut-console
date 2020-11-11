@@ -40,13 +40,14 @@ dependencies {
 
     testCompile "io.micronaut:micronaut-inject-groovy"
     testCompile "io.micronaut:micronaut-http-server-netty"
-    testCompile 'io.micronaut:micronaut-function-web'
 
     testCompile("org.spockframework:spock-core") {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
 
     testCompile "com.agorapulse:gru-http:$gruVersion"
+
+    testCompile 'io.micronaut:micronaut-function'
 
     testCompile "org.apache.logging.log4j:log4j-slf4j18-impl:2.13.3"
 }

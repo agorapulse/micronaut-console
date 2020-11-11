@@ -1,5 +1,5 @@
 com.agorapulse.micronaut.console.ConsoleException: Exception during script execution
-	at com.agorapulse.micronaut.console.DefaultConsoleService.execute(DefaultConsoleService.java:79)
+	at com.agorapulse.micronaut.console.DefaultConsoleService.execute(DefaultConsoleService.java:82)
 	at com.agorapulse.micronaut.console.http.ConsoleController.executeAndReturnText(ConsoleController.java:62)
 	at com.agorapulse.micronaut.console.http.$ConsoleControllerDefinition$$exec2.invokeInternal(Unknown Source)
 	at io.micronaut.context.AbstractExecutableMethod.invoke(AbstractExecutableMethod.java:147)
@@ -53,11 +53,11 @@ Caused by: java.lang.RuntimeException: You are exceptional!
 	at groovy.lang.GroovyShell.evaluate(GroovyShell.java:475)
 	at groovy.lang.GroovyShell.evaluate(GroovyShell.java:446)
 	at com.agorapulse.micronaut.console.groovy.GroovyConsoleEngine.execute(GroovyConsoleEngine.java:61)
-	at com.agorapulse.micronaut.console.DefaultConsoleService.execute(DefaultConsoleService.java:74)
+	at com.agorapulse.micronaut.console.DefaultConsoleService.execute(DefaultConsoleService.java:77)
 	... 38 more
 
 
 Language: groovy
-User: Anonymous @ /127.0.0.1
+User: someuser @ /127.0.0.1
 
 throw new RuntimeException("You are exceptional!")

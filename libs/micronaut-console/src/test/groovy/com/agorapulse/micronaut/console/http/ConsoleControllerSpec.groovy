@@ -28,6 +28,8 @@ import spock.lang.Specification
 
 class ConsoleControllerSpec extends Specification {
 
+    private static final String USER = 'someuser'
+
     @Shared @AutoCleanup ApplicationContext context
     @Shared @AutoCleanup EmbeddedServer server
 
@@ -35,7 +37,10 @@ class ConsoleControllerSpec extends Specification {
 
 
     void setupSpec() {
-        context = ApplicationContext.build().build()
+        context = ApplicationContext.build(
+            'console.addresses': '/127.0.0.1',
+            'console.users': USER
+        ).build()
 
         context.start()
 
@@ -51,6 +56,7 @@ class ConsoleControllerSpec extends Specification {
         expect:
             gru.test {
                 post('/console/execute') {
+                    headers 'X-Console-User': USER
                     content inline('"Hello world!"'), 'text/groovy'
                 }
                 expect {
@@ -59,10 +65,23 @@ class ConsoleControllerSpec extends Specification {
             }
     }
 
+    void 'execute a simple groovy script without valid user'() {
+        expect:
+            gru.test {
+                post('/console/execute') {
+                    content inline('"Hello world!"'), 'text/groovy'
+                }
+                expect {
+                    status UNAUTHORIZED
+                }
+            }
+    }
+
     void 'execute groovy script which uses context'() {
         expect:
             gru.test {
                 post('/console/execute') {
+                    headers 'X-Console-User': USER
                     content 'inception.groovy', 'text/groovy'
                 }
                 expect {
@@ -75,6 +94,7 @@ class ConsoleControllerSpec extends Specification {
         expect:
             gru.test {
                 post('/console/execute') {
+                    headers 'X-Console-User': USER
                     content 'exceptional.groovy', 'text/groovy'
                 }
                 expect {
@@ -88,6 +108,7 @@ class ConsoleControllerSpec extends Specification {
         expect:
             gru.test {
                 post('/console/execute/result') {
+                    headers 'X-Console-User': USER
                     content 'exceptional.groovy', 'text/groovy'
                 }
                 expect {
@@ -103,6 +124,7 @@ class ConsoleControllerSpec extends Specification {
         expect:
             gru.test {
                 post('/console/execute') {
+                    headers 'X-Console-User': USER
                     content 'printer.groovy', 'text/groovy'
                 }
                 expect {
@@ -116,6 +138,7 @@ class ConsoleControllerSpec extends Specification {
         expect:
             gru.test {
                 post('/console/execute') {
+                    headers 'X-Console-User': USER
                     content 'jsr223.js', 'text/ecmascript'
                 }
                 expect {
@@ -128,6 +151,7 @@ class ConsoleControllerSpec extends Specification {
         expect:
             gru.test {
                 post('/console/execute/result') {
+                    headers 'X-Console-User': USER
                     content 'printer.groovy', 'text/groovy'
                 }
                 expect {
@@ -140,6 +164,7 @@ class ConsoleControllerSpec extends Specification {
         expect:
             gru.test {
                 post('/console/execute') {
+                    headers 'X-Console-User': USER
                     content inline('"Hello Voldemort"'), 'text/spellwords'
                 }
                 expect {
@@ -152,6 +177,7 @@ class ConsoleControllerSpec extends Specification {
         expect:
             gru.test {
                 post('/console/execute') {
+                    headers 'X-Console-User': USER
                     content inline('abrakadabra'), 'text/spell'
                 }
                 expect {

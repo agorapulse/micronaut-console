@@ -4,7 +4,8 @@
         "language": "groovy",
         "body": "throw new RuntimeException(\"You are exceptional!\")\n",
         "user": {
-            "origin": "/127.0.0.1"
+            "id": "someuser",
+            "address": "/127.0.0.1"
         }
     }
 }

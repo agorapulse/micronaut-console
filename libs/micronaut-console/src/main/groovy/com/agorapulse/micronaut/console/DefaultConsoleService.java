@@ -32,16 +32,19 @@ public class DefaultConsoleService implements ConsoleService {
     private final List<BindingProvider> bindingProviders;
     private final List<SecurityAdvisor> securityAdvisors;
     private final Map<String, ConsoleEngine> engines;
+    private final ConsoleConfiguration configuration;
 
     public DefaultConsoleService(
         List<AuditService> auditServices,
         List<BindingProvider> bindingProviders,
         List<SecurityAdvisor> securityAdvisors,
-        List<ConsoleEngineFactory> engines
+        List<ConsoleEngineFactory> engines,
+        ConsoleConfiguration configuration
     ) {
         this.auditServices = auditServices;
         this.bindingProviders = bindingProviders;
         this.securityAdvisors = securityAdvisors;
+        this.configuration = configuration;
 
         Map<String, ConsoleEngine> map = new HashMap<>();
         engines.forEach(f -> f.getEngines().forEach(e -> map.put(e.getLanguage(), e)));
@@ -87,6 +90,6 @@ public class DefaultConsoleService implements ConsoleService {
                 return engine.getLanguage();
             }
         }
-        return null;
+        return configuration.getLanguage();
     }
 }

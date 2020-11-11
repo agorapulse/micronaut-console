@@ -38,7 +38,13 @@ public class FallbackUserBinder implements TypedRequestArgumentBinder<User> {
 
     @Override
     public BindingResult<User> bind(ArgumentConversionContext<User> context, HttpRequest<?> source) {
-        return () -> Optional.of(new User(null, null, source.getRemoteAddress().getAddress().toString()));
+        return () -> Optional.of(
+            new User(
+                null,
+                null,
+                source.getRemoteAddress().getAddress().toString()
+            )
+        );
     }
 
 }

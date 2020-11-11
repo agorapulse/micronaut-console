@@ -19,14 +19,18 @@ package com.agorapulse.micronaut.console;
 
 public class User {
 
+    public static User anonymous() {
+        return new User(null, null, null);
+    }
+
     private final String id;
     private final String name;
-    private final String origin;
+    private final String address;
 
-    public User(String id, String name, String origin) {
+    public User(String id, String name, String address) {
         this.id = id;
         this.name = name;
-        this.origin = origin;
+        this.address = address;
     }
 
     public String getId() {
@@ -37,8 +41,8 @@ public class User {
         return name;
     }
 
-    public String getOrigin() {
-        return origin;
+    public String getAddress() {
+        return address;
     }
 
     @Override
@@ -56,8 +60,8 @@ public class User {
             builder.append("Anonymous");
         }
 
-        if (origin != null) {
-            builder.append(" @ ").append(origin);
+        if (address != null) {
+            builder.append(" @ ").append(address);
         }
 
         return builder.toString();

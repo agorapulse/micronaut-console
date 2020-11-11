@@ -17,36 +17,30 @@
  */
 package com.agorapulse.micronaut.console.function;
 
-import com.agorapulse.micronaut.console.ConsoleEngine;
-import com.agorapulse.micronaut.console.ConsoleService;
-import com.agorapulse.micronaut.console.Script;
-import com.agorapulse.micronaut.console.User;
+import com.agorapulse.micronaut.console.*;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.function.FunctionBean;
 import io.micronaut.function.executor.FunctionInitializer;
 
 import javax.inject.Inject;
-import java.util.Optional;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.function.UnaryOperator;
 
 @FunctionBean(value = "console", method = "apply")
 public class ConsoleHandler extends FunctionInitializer implements UnaryOperator<String> {
 
-    @Inject private ConsoleService consoleService;
-    @Inject private ConsoleEngine engine;
+    @Inject private ConsoleService service;
+    @Inject private ConsoleConfiguration configuration;
 
     @Override
-    public String apply(String event) {
-        String logGroupName = Optional.ofNullable(System.getenv("AWS_LAMBDA_LOG_GROUP_NAME")).orElse("unknown");
-        String logStreamName = Optional.ofNullable(System.getenv("AWS_LAMBDA_LOG_STREAM_NAME")).orElse("unknown");
-
-        Script script = new Script(engine.getLanguage(), event, new User(
-            null,
-            null,
-               logGroupName + "/" + logStreamName
-            ));
-
-        return consoleService.execute(script).toString();
+    public String apply(String scriptBody) {
+        Script script = new Script(configuration.getLanguage(), scriptBody, User.anonymous());
+        try {
+            return service.execute(script).toString();
+        } catch (Throwable th) {
+            return extractMessage(th) + "\n\nScript:\n" + script;
+        }
     }
 
     public ConsoleHandler() { }
@@ -55,4 +49,10 @@ public class ConsoleHandler extends FunctionInitializer implements UnaryOperator
         super(applicationContext);
     }
 
+    private String extractMessage(Throwable exception) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        exception.printStackTrace(pw);
+        return sw.toString();
+    }
 }
