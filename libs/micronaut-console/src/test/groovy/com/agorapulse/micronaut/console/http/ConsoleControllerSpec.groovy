@@ -35,7 +35,6 @@ class ConsoleControllerSpec extends Specification {
 
     @Rule Gru gru = Gru.equip(Http.steal(this))
 
-
     void setupSpec() {
         context = ApplicationContext.build(
             'console.addresses': '/127.0.0.1',
@@ -133,7 +132,6 @@ class ConsoleControllerSpec extends Specification {
             }
     }
 
-
     void 'execute js script which prints to the console'() {
         expect:
             gru.test {
@@ -185,4 +183,5 @@ class ConsoleControllerSpec extends Specification {
                 }
             }
     }
+
 }

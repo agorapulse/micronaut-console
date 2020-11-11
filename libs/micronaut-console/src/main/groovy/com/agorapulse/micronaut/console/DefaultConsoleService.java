@@ -57,14 +57,14 @@ public class DefaultConsoleService implements ConsoleService {
         for (SecurityAdvisor a : securityAdvisors) {
             if (!a.isExecutionAllowed(script)) {
                 throw new ConsoleSecurityException(script, "Execution forbidden by " + a);
-            };
+            }
         }
 
         ConsoleEngine engine = engines.get(script.getLanguage());
 
         if (engine == null) {
-            throw new ConsoleException(script, "No engine present for " + script.getLanguage() +
-                ". Set 'io.micronaut.context.condition' logging to trace debug missing engines");
+            throw new ConsoleException(script, "No engine present for " + script.getLanguage()
+                + ". Set 'io.micronaut.context.condition' logging to trace debug missing engines");
         }
 
         Map<String, Object> bindings = new LinkedHashMap<>();
