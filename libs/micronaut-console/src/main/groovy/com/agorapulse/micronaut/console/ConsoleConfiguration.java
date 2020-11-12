@@ -18,8 +18,11 @@
 package com.agorapulse.micronaut.console;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.core.convert.ConversionService;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @ConfigurationProperties("console")
@@ -28,6 +31,7 @@ public class ConsoleConfiguration {
     private String language = "groovy";
     private List<String> addresses = new ArrayList<>();
     private List<String> users = new ArrayList<>();
+    private Object until;
 
     /**
      * @return the default language to be used if unspecified
@@ -71,4 +75,32 @@ public class ConsoleConfiguration {
         this.users = users;
     }
 
+    /**
+     * @return the date and time until the console is enabled which can be used for temporary access
+     */
+    public Object getUntil() {
+        return until;
+    }
+
+    /**
+     * @param until the date and time until the console is enabled which can be used for temporary access
+     */
+    public void setUntil(Object until) {
+        this.until = until;
+    }
+
+    public Instant convertUntil() {
+        if (until == null) {
+            return null;
+        }
+        if (until instanceof CharSequence) {
+            return Instant.parse((CharSequence) until);
+        }
+        if (until instanceof Date) {
+            return ((Date)until).toInstant();
+        }
+        return ConversionService.SHARED.convert(until, Instant.class).orElseThrow(() ->
+            new IllegalArgumentException("Cannot convert " + until + " (" + until.getClass() + ") to Instant")
+        );
+    }
 }

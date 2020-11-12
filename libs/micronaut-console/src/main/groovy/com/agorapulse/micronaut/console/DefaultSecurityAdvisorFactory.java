@@ -22,6 +22,7 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 
 import javax.inject.Singleton;
+import java.time.Instant;
 
 @Factory
 public class DefaultSecurityAdvisorFactory {
@@ -50,6 +51,13 @@ public class DefaultSecurityAdvisorFactory {
             }
             return configuration.getUsers().contains(script.getUser().getId());
         };
+    }
+
+    @Bean
+    @Singleton
+    @Requires(property = "console.until")
+    public SecurityAdvisor untilWindow(ConsoleConfiguration configuration) {
+        return script -> Instant.now().isBefore(configuration.convertUntil());
     }
 
 }
