@@ -28,10 +28,25 @@ import java.util.List;
 @ConfigurationProperties("console")
 public class ConsoleConfiguration {
 
+    private boolean enabled;
     private String language = "groovy";
     private List<String> addresses = new ArrayList<>();
     private List<String> users = new ArrayList<>();
     private Object until;
+
+    /**
+     * @return true if the console should be enabled in the <code>cloud</code> environment
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * @param enabled true if the console should be enabled in the <code>cloud</code> environment
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     /**
      * @return the default language to be used if unspecified
