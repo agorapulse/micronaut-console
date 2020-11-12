@@ -36,7 +36,6 @@ class MicronautSecurityIntegrationSpec extends Specification {
 
     @Rule Gru gru = Gru.equip(Http.steal(this))
 
-
     void setupSpec() {
         context = ApplicationContext.build().build()
 
@@ -78,6 +77,5 @@ class MicronautSecurityIntegrationSpec extends Specification {
                 }
             }
     }
-
 
 }

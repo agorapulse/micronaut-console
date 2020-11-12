@@ -36,8 +36,7 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
     @Override
     public Publisher<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) {
         return Flowable.create(emitter -> {
-            if (authenticationRequest.getIdentity().equals("sherlock") &&
-                authenticationRequest.getSecret().equals("password")) {
+            if (authenticationRequest.getIdentity().equals("sherlock") && authenticationRequest.getSecret().equals("password")) {
                 emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList<>()));
                 emitter.onComplete();
             } else {
