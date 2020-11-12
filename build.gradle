@@ -115,6 +115,7 @@ allprojects {
         exclude '**/ConsoleControllerSpec/*.groovy'
         exclude '**/ConsoleControllerSpec/*.txt'
         exclude 'external.groovy'
+        exclude '**/scripts/*.groovy'
     }
 }
 
