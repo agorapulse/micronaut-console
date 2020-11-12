@@ -18,31 +18,33 @@
 package com.agorapulse.micronaut.console.http;
 
 import com.agorapulse.micronaut.console.User;
-import io.micronaut.context.annotation.Replaces;
+import io.micronaut.context.annotation.Secondary;
 import io.micronaut.core.convert.ArgumentConversionContext;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.bind.binders.TypedRequestArgumentBinder;
 
 import javax.inject.Singleton;
+import java.util.Optional;
 
 @Singleton
-@Replaces(AnonymousUserArgumentBinder.class)
-public class SimpleUserBinder implements TypedRequestArgumentBinder<User> {
-
-    private final AnonymousUserArgumentBinder delegate = new AnonymousUserArgumentBinder();
+@Secondary
+public class AnonymousUserArgumentBinder implements TypedRequestArgumentBinder<User> {
 
     @Override
     public Argument<User> argumentType() {
-        return delegate.argumentType();
+        return Argument.of(User.class);
     }
 
     @Override
     public BindingResult<User> bind(ArgumentConversionContext<User> context, HttpRequest<?> source) {
-        return () -> delegate.bind(context, source).getValue().map(u -> new User(
-            source.getHeaders().get("X-Console-User"),
-            source.getHeaders().get("X-Console-Name"),
-            u.getAddress()
-        ));
+        return () -> Optional.of(
+            new User(
+                null,
+                null,
+                source.getRemoteAddress().getAddress().toString()
+            )
+        );
     }
+
 }

@@ -18,18 +18,22 @@
 package com.agorapulse.micronaut.console.http;
 
 import com.agorapulse.micronaut.console.User;
-import io.micronaut.context.annotation.Secondary;
+import io.micronaut.context.annotation.Replaces;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.bind.ArgumentBinder;
 import io.micronaut.core.convert.ArgumentConversionContext;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.bind.binders.TypedRequestArgumentBinder;
 
 import javax.inject.Singleton;
+import java.security.Principal;
 import java.util.Optional;
 
 @Singleton
-@Secondary
-public class FallbackUserBinder implements TypedRequestArgumentBinder<User> {
+@Replaces(AnonymousUserArgumentBinder.class)
+@Requires(property = "micronaut.security.enabled")
+public class MicronautSecurityUserArgumentBinder implements TypedRequestArgumentBinder<User> {
 
     @Override
     public Argument<User> argumentType() {
@@ -38,13 +42,20 @@ public class FallbackUserBinder implements TypedRequestArgumentBinder<User> {
 
     @Override
     public BindingResult<User> bind(ArgumentConversionContext<User> context, HttpRequest<?> source) {
-        return () -> Optional.of(
-            new User(
-                null,
-                null,
-                source.getRemoteAddress().getAddress().toString()
-            )
-        );
+        if (source.getAttributes().contains("micronaut.once.SecurityFilter")) {
+            final Optional<Principal> existing = source.getUserPrincipal();
+            if (existing.isPresent()) {
+                return () -> Optional.of(
+                    new User(
+                        existing.get().getName(),
+                        null,
+                        source.getRemoteAddress().getAddress().toString()
+                    )
+                );
+            }
+        }
+
+        return ArgumentBinder.BindingResult.EMPTY;
     }
 
 }

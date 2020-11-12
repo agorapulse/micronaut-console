@@ -1,0 +1,26 @@
+micronaut:
+  application:
+    name: micronaut-console-example
+---
+micronaut:
+  security:
+    enabled: true
+    endpoints:
+      login:
+        enabled: true
+    token:
+      jwt:
+        enabled: true
+        signatures:
+          secret:
+            generator:
+              secret: pleaseChangeThisSecretForANewOne
+    intercept-url-map:
+      - pattern: /console/**
+        access:
+          - isAuthenticated()
+console:
+  users:
+    - sherlock
+  addresses:
+    - /127.0.0.1

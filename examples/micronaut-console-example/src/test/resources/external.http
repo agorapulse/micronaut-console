@@ -1,0 +1,25 @@
+POST http://localhost:8080/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+> {%
+    client.global.set("auth_token", response.body.access_token);
+    print("\nusing auth token: " + response.body.access_token + "\n");
+%}
+
+###
+POST http://localhost:8080/console/execute/result
+Content-Type: text/groovy
+Accept: text/plain
+Authorization: Bearer {{auth_token}}
+
+< external.groovy
+
+
+
+
