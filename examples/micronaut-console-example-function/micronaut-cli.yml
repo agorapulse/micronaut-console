@@ -1,0 +1,5 @@
+profile: function-aws
+defaultPackage: micronaut.console.example.function
+---
+testFramework: spock
+sourceLanguage: java

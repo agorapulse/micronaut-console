@@ -1,0 +1,98 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "jp.classmethod.aws.lambda" version "0.39"
+    id "net.ltgt.apt-eclipse" version "0.21"
+    id "application"
+    id "groovy"
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://jcenter.bintray.com" }
+}
+
+configurations {
+    // for dependencies that are needed for development only
+    developmentOnly
+}
+
+dependencies {
+    implementation project(':micronaut-console')
+    implementation 'org.codehaus.groovy:groovy'
+
+    annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
+    annotationProcessor "io.micronaut:micronaut-inject-java"
+    annotationProcessor "io.micronaut:micronaut-validation"
+
+    implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
+    implementation "io.micronaut:micronaut-inject"
+    implementation "io.micronaut:micronaut-validation"
+    implementation "io.micronaut:micronaut-runtime"
+    implementation "io.micronaut:micronaut-function-aws"
+    runtimeOnly "com.amazonaws:aws-lambda-java-log4j2:1.0.0"
+    runtimeOnly "org.apache.logging.log4j:log4j-slf4j-impl:2.9.1"
+
+    testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
+    testAnnotationProcessor "io.micronaut:micronaut-inject-java"
+
+    testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
+    testImplementation "io.micronaut:micronaut-function-client"
+    testImplementation "io.micronaut:micronaut-inject-java"
+
+    testImplementation("org.spockframework:spock-core") {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation "io.micronaut.test:micronaut-test-spock"
+}
+
+test.classpath += configurations.developmentOnly
+
+shadowJar {
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
+}
+
+tasks.withType(JavaCompile){
+    options.encoding = "UTF-8"
+    options.compilerArgs.add('-parameters')
+}
+
+shadowJar {
+    mergeServiceFiles()
+    mergeGroovyExtensionModules()
+}
+
+run.classpath += configurations.developmentOnly
+run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
+mainClassName = "micronaut.console.example.function.MicronautConsoleExampleFunctionFunction"
+applicationDefaultJvmArgs = [""]
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}
+
+task deploy(type: jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
+    functionName = "MicronautConsoleSandbox"
+    handler = "com.agorapulse.micronaut.console.function.ConsoleHandler::apply"
+    role = "arn:aws:iam::${aws.accountId}:role/lambda_basic_execution"
+    runtime = com.amazonaws.services.lambda.model.Runtime.Java8
+    zipFile = shadowJar.archivePath
+    memorySize = 512
+    timeout = 60
+}
+
+task invoke(type: jp.classmethod.aws.gradle.lambda.AWSLambdaInvokeTask) {
+    File scriptFile = file(project.hasProperty('script.file') ? project.getProperty('script.file') : 'src/test/resources/scripts/hello.sandbox.groovy')
+
+    functionName = 'MicronautConsoleSandbox'
+    invocationType = com.amazonaws.services.lambda.model.InvocationType.RequestResponse
+    payload = groovy.json.JsonOutput.toJson(scriptFile.text)
+
+    doLast {
+        println "\nLambda function result:\n"
+        println new groovy.json.JsonSlurper().parseText(new String(invokeResult.payload.array(), "UTF-8"))
+        println()
+    }
+}
