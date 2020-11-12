@@ -95,6 +95,12 @@ config {
             toolVersion = '1.5'
         }
     }
+    
+    coverage {
+        coveralls {
+            enabled = true
+        }
+    }
 
 }
 
