@@ -112,8 +112,6 @@ class ConsoleControllerSpec extends Specification {
                 }
                 expect {
                     status BAD_REQUEST
-                    // this will be tricky to maintain but let's keep it here and update regularly
-                    // delete the file and let the test recreate it when this fails after update
                     text 'exceptional.txt'
                 }
             }

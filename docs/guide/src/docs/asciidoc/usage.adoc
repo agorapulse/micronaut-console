@@ -2,20 +2,88 @@
 [[_usage]]
 = Usage
 
+== Server Applications
+
+The basic use case is to execute a script inside your HTTP server application. There are two endpoints
+`/console/execute` and `/console/execute/result`. Both endpoints
+accept the script as a body of a `POST` request, but the first one returns a JSON response
+whereas the second one plain text results.
+
+TIP: The base path `/console` can be altered using `console.path` configuration property.
+
+This is the example of the very simple Groovy script:
+
+[source,groovy]
+.Example Groovy Script
+----
+include::{root-dir}/libs/micronaut-console/src/test/resources/com/agorapulse/micronaut/console/http/ConsoleControllerSpec/printer.groovy[]
+----
+
+TIP: By default, there is a single variable `ctx` of the type `io.micronaut.context.ApplicationContext` available in the script.
+You can create additional beans of the type `com.agorapulse.micronaut.console.BindingProvider` to provide additional binding variables.
+
+You can use either bash tools such as cURL to execute the script, or you can use IDE integrations such as builtin IntelliJ HTTP client.
+The `Content-Type` must match the mime type of language e.g. `text/groovy`, `application/javascript` or `text/x-kotlin`.
+
+[source,shell script,indent=0,role="primary"]
+.Bash Script
+----
+curl -X POST -H "Content-Type: text/groovy" --data-binary @printer.groovy "http://localhost:8080/console/execute/result"
+----
+
+[source,indent=0,role="secondary"]
+.IntelliJ HTTP Client with Inline Code
+----
+include::{root-dir}/examples/micronaut-console-example-application/src/test/resources/inline.http[tag=request]
+
+// language=groovy                                                                      <1>
+include::{root-dir}/libs/micronaut-console/src/test/resources/com/agorapulse/micronaut/console/http/ConsoleControllerSpec/printer.groovy[]
+----
+<1> IntelliJ hint to handle tho body of the request as Groovy code and give you all the content assist available
+
+[source,indent=0,role="secondary"]
+.IntelliJ HTTP Client with External Script
+----
+include::{root-dir}/examples/micronaut-console-example-application/src/test/resources/inline.http[tag=request]
+
+< printer.groovy                                                                        <1>
+----
+<1> Path to the script file which will get all the content assist available
+
+After execution, you will get the following results depending on an endpoint used:
+
+[source,json,indent=0,role="primary"]
+.JSON
+----
+include::{root-dir}/libs/micronaut-console/src/test/resources/com/agorapulse/micronaut/console/http/ConsoleControllerSpec/printer.json[]
+----
+
+[source,indent=0,role="secondary"]
+.Plain Text
+----
+include::{root-dir}/libs/micronaut-console/src/test/resources/com/agorapulse/micronaut/console/http/ConsoleControllerSpec/printer.txt[]
+----
+
+JSON responses are useful if you want to create a client for console endpoints. On the other hand,
+plain text responses are useful for shell and IDE executions.
+
+TIP: The `result` property returns a JSON representation of the last evaluated line so it can also be a JavaScript
+object or array depending on the situation.
+
 * HTTP
-    * JSON
-    * Plain
-    * Language Selection
+    * [x] JSON
+    * [x] Plain
+    * [x] Language Selection
 * Security
-    * advisors
-    * address (IP)
-    * users
-    * until window
-    * cloud + enabled
-    * Micronaut Security
-* Function
-* Engines Groovy/JSR223
-* Additional Bindings
-* Auditing
-* IntelliJ Usage
-* Function
+    * [ ] advisors
+    * [ ] address (IP)
+    * [ ] users
+    * [ ] until window
+    * [ ] cloud + enabled
+    * [ ] Micronaut Security
+    * [ ] Auditing
+* [ ] Function
+* [x] Engines Groovy/JSR223/Kotlin
+* [ ] Compilation Customizer
+* [x] Additional Bindings
+* [x] IntelliJ Usage

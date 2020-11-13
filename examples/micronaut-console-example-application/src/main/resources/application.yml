@@ -24,4 +24,5 @@ console:
     - sherlock
   addresses:
     - /127.0.0.1
+    - /0:0:0:0:0:0:0:1
   until: 2030-11-12T10:28:00Z

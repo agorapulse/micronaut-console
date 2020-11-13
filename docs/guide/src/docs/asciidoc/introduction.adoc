@@ -4,4 +4,5 @@
 
 Micronaut Console is extension to the https://micronaut.io/[Micronaut] applications and functions
 which allows executing arbitrary code. The project has been inspired by the https://github.com/sheehan/grails-console[Grails Console Plugin].
-The console does not provide any web UI yet but it leverages the power of your IDE.
+The console does not provide any web UI but it allows you to leverage the power of your IDE. Micronaut Console provides out-of-box support
+for Groovy and for any JSR223 compatible scripting engine such as built-in Ecmascript Nashorn engine or Kotlin script JSR223 wrapper.

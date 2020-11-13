@@ -18,13 +18,12 @@
 package com.agorapulse.micronaut.console.function;
 
 import com.agorapulse.micronaut.console.*;
+import com.agorapulse.micronaut.console.util.ExceptionSanitizer;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.function.FunctionBean;
 import io.micronaut.function.executor.FunctionInitializer;
 
 import javax.inject.Inject;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.function.UnaryOperator;
 
 @FunctionBean(value = "console", method = "apply")
@@ -32,6 +31,7 @@ public class ConsoleHandler extends FunctionInitializer implements UnaryOperator
 
     @Inject private ConsoleService service;
     @Inject private ConsoleConfiguration configuration;
+    @Inject private ExceptionSanitizer sanitizer;
 
     @Override
     public String apply(String scriptBody) {
@@ -39,7 +39,7 @@ public class ConsoleHandler extends FunctionInitializer implements UnaryOperator
         try {
             return service.execute(script).toString();
         } catch (Throwable th) {
-            return extractMessage(th) + "\n\nScript:\n" + script;
+            return sanitizer.extractMessage(th) + "\n\nScript:\n" + script;
         }
     }
 
@@ -47,12 +47,5 @@ public class ConsoleHandler extends FunctionInitializer implements UnaryOperator
 
     public ConsoleHandler(ApplicationContext applicationContext) {
         super(applicationContext);
-    }
-
-    private String extractMessage(Throwable exception) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        exception.printStackTrace(pw);
-        return sw.toString();
     }
 }

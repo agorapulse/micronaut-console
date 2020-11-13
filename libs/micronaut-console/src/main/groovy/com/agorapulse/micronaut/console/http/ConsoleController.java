@@ -23,6 +23,7 @@ import com.agorapulse.micronaut.console.ExecutionResult;
 import com.agorapulse.micronaut.console.Script;
 import com.agorapulse.micronaut.console.ConsoleSecurityException;
 import com.agorapulse.micronaut.console.User;
+import com.agorapulse.micronaut.console.util.ExceptionSanitizer;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -35,16 +36,16 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.hateoas.JsonError;
 
 import javax.annotation.Nullable;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 @Controller("${console.path:/console}")
 public class ConsoleController {
 
     private final ConsoleService service;
+    private final ExceptionSanitizer sanitizer;
 
-    public ConsoleController(ConsoleService service) {
+    public ConsoleController(ConsoleService service, ExceptionSanitizer sanitizer) {
         this.service = service;
+        this.sanitizer = sanitizer;
     }
 
     @Post("/execute")
@@ -61,24 +62,17 @@ public class ConsoleController {
         try {
             return HttpResponse.ok(service.execute(new Script(service.getLanguageForMimeType(contentType), body, user)).toString());
         } catch (ConsoleException e) {
-            return HttpResponse.badRequest(extractMessage(e) + "\n\n" + e.getScript());
+            return HttpResponse.badRequest(sanitizer.extractMessage(e) + "\n\n" + e.getScript());
         }
     }
 
     @Error(ConsoleException.class)
     public HttpResponse<JsonError> consoleException(ConsoleException exception) {
-        ScriptJsonError error = new ScriptJsonError(exception.getScript(), extractMessage(exception));
+        ScriptJsonError error = new ScriptJsonError(exception.getScript(), sanitizer.extractMessage(exception));
         if (exception instanceof ConsoleSecurityException) {
             return HttpResponse.unauthorized();
         }
         return HttpResponse.badRequest(error);
-    }
-
-    private String extractMessage(ConsoleException exception) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        exception.printStackTrace(pw);
-        return sw.toString();
     }
 
 }
