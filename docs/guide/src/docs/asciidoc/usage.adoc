@@ -2,4 +2,20 @@
 [[_usage]]
 = Usage
 
-Lorem ipsum dolor sit amet
+* HTTP
+    * JSON
+    * Plain
+    * Language Selection
+* Security
+    * advisors
+    * address (IP)
+    * users
+    * until window
+    * cloud + enabled
+    * Micronaut Security
+* Function
+* Engines Groovy/JSR223
+* Additional Bindings
+* Auditing
+* IntelliJ Usage
+* Function
