@@ -24,7 +24,6 @@ import javax.inject.Singleton;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,7 +44,7 @@ public class JavaScriptingConsoleEngineFactory implements ConsoleEngineFactory {
                 engines.add(new JavaScriptingConsoleEngine(
                     factory.getScriptEngine(),
                     name,
-                    Arrays.asList("application/" + name, "x-application/" + name, "text/" + name, "script/" + name)
+                    factory.getMimeTypes()
                 ));
             }
         }
