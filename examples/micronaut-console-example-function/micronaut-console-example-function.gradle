@@ -1,3 +1,10 @@
+import com.amazonaws.services.lambda.model.InvocationType
+import com.amazonaws.services.lambda.model.Runtime
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import jp.classmethod.aws.gradle.lambda.AWSLambdaInvokeTask
+import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
+
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -90,26 +97,29 @@ jar {
     }
 }
 
-task deploy(type: jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
+
+// tag::tasks[]
+task deploySandbox(type: AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
     functionName = "MicronautConsoleSandbox"
     handler = "com.agorapulse.micronaut.console.function.ConsoleHandler::apply"
     role = "arn:aws:iam::${aws.accountId}:role/lambda_basic_execution"
-    runtime = com.amazonaws.services.lambda.model.Runtime.Java8
+    runtime = Runtime.Java8
     zipFile = shadowJar.archivePath
     memorySize = 512
     timeout = 60
 }
 
-task invoke(type: jp.classmethod.aws.gradle.lambda.AWSLambdaInvokeTask) {
+task invokeSandbox(type: AWSLambdaInvokeTask) {
     File scriptFile = file(project.hasProperty('script.file') ? project.getProperty('script.file') : 'src/test/resources/scripts/hello.sandbox.groovy')
 
     functionName = 'MicronautConsoleSandbox'
-    invocationType = com.amazonaws.services.lambda.model.InvocationType.RequestResponse
-    payload = groovy.json.JsonOutput.toJson(scriptFile.text)
+    invocationType = InvocationType.RequestResponse
+    payload = JsonOutput.toJson(scriptFile.text)
 
     doLast {
         println "\nLambda function result:\n"
-        println new groovy.json.JsonSlurper().parseText(new String(invokeResult.payload.array(), "UTF-8"))
+        println new JsonSlurper().parseText(new String(invokeResult.payload.array(), "UTF-8"))
         println()
     }
 }
+// end::tasks[]
