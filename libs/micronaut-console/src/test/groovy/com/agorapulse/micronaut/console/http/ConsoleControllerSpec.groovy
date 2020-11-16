@@ -182,4 +182,34 @@ class ConsoleControllerSpec extends Specification {
             }
     }
 
+    void 'get gdsl script'() {
+        expect:
+            gru.test {
+                get('/console/dsl/gdsl')
+                expect {
+                    text 'generated.gdsl'
+                }
+            }
+    }
+
+    void 'get dsld script'() {
+        expect:
+            gru.test {
+                get('/console/dsl/dsld')
+                expect {
+                    text 'generated.dsld'
+                }
+            }
+    }
+
+    void 'get text binding summary'() {
+        expect:
+            gru.test {
+                get('/console/dsl/text')
+                expect {
+                    text 'generated.txt'
+                }
+            }
+    }
+
 }

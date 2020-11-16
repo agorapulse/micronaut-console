@@ -23,6 +23,7 @@ import com.agorapulse.micronaut.console.ExecutionResult;
 import com.agorapulse.micronaut.console.Script;
 import com.agorapulse.micronaut.console.ConsoleSecurityException;
 import com.agorapulse.micronaut.console.User;
+import com.agorapulse.micronaut.console.ide.DslGenerator;
 import com.agorapulse.micronaut.console.util.ExceptionSanitizer;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -30,22 +31,30 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Error;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.hateoas.JsonError;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Controller("${console.path:/console}")
 public class ConsoleController {
 
     private final ConsoleService service;
     private final ExceptionSanitizer sanitizer;
+    private final Map<String, DslGenerator> generators;
 
-    public ConsoleController(ConsoleService service, ExceptionSanitizer sanitizer) {
+    public ConsoleController(ConsoleService service, ExceptionSanitizer sanitizer, List<DslGenerator> generatorList) {
         this.service = service;
         this.sanitizer = sanitizer;
+        this.generators = generatorList.stream().collect(Collectors.toMap(DslGenerator::getScriptType, Function.identity()));
     }
 
     @Post("/execute")
@@ -64,6 +73,18 @@ public class ConsoleController {
         } catch (ConsoleException e) {
             return HttpResponse.badRequest(sanitizer.extractMessage(e) + "\n\n" + e.getScript());
         }
+    }
+
+    @Get("/dsl/{type}")
+    @Produces("text/plain")
+    public HttpResponse<String> generateDslFile(@PathVariable("type") String type) {
+        DslGenerator generator = generators.get(type);
+
+        if (generator == null) {
+            return HttpResponse.notFound("Generator for " + type + " does not exist! Available " + String.join(", ", generators.keySet()));
+        }
+
+        return HttpResponse.ok(generator.generateScript());
     }
 
     @Error(ConsoleException.class)
