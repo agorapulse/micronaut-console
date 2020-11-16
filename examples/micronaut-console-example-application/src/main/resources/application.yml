@@ -2,25 +2,38 @@ micronaut:
   application:
     name: micronaut-console-example
 ---
+# tag::micronaut-security[]
 micronaut:
   security:
-    enabled: true
+    enabled: true                                                                       # <1>
     endpoints:
       login:
-        enabled: true
+        enabled: true                                                                   # <2>
     token:
       jwt:
-        enabled: true
+        enabled: true                                                                   # <3>
         signatures:
           secret:
             generator:
-              secret: pleaseChangeThisSecretForANewOne
+              secret: pleaseChangeThisSecretForANewOne                                  # <4>
     intercept-url-map:
-      - pattern: /console/**
+      - pattern: /console/**                                                            # <5>
+        http-method: GET
+        access:
+          - isAnonymous()
+      - pattern: /console/**                                                            # <6>
+        http-method: POST
         access:
           - isAuthenticated()
+# end::micronaut-security[]
 console:
+  # tag::users[]
   users:
     - sherlock
+  # end::users[]
+  # tag::address[]
   addresses:
     - /127.0.0.1
+    - /0:0:0:0:0:0:0:1
+  # end::address[]
+  until: 2030-11-12T10:28:00Z

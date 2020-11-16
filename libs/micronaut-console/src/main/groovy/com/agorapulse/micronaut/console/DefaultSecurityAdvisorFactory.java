@@ -17,11 +17,14 @@
  */
 package com.agorapulse.micronaut.console;
 
+import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
 
 import javax.inject.Singleton;
+import java.time.Instant;
 
 @Factory
 public class DefaultSecurityAdvisorFactory {
@@ -49,6 +52,31 @@ public class DefaultSecurityAdvisorFactory {
                 return false;
             }
             return configuration.getUsers().contains(script.getUser().getId());
+        };
+    }
+
+    @Bean
+    @Singleton
+    @Requires(property = "console.until")
+    public SecurityAdvisor untilWindow(ConsoleConfiguration configuration) {
+        return script -> Instant.now().isBefore(configuration.convertUntil());
+    }
+
+    @Bean
+    @Singleton
+    public SecurityAdvisor consoleEnabled(ApplicationContext context, ConsoleConfiguration configuration) {
+        return script -> {
+            if (configuration.isEnabled()) {
+                return true;
+            }
+
+            // functions has their own security checks
+            if (context.getEnvironment().getActiveNames().contains(Environment.FUNCTION)) {
+                return true;
+            }
+
+            // disable by default for the cloud environment (deployed apps)
+            return !context.getEnvironment().getActiveNames().contains(Environment.CLOUD);
         };
     }
 

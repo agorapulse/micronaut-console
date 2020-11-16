@@ -2,4 +2,245 @@
 [[_usage]]
 = Usage
 
-Lorem ipsum dolor sit amet
+== Script Variables
+By default, there is a single variable `ctx` of the type `io.micronaut.context.ApplicationContext` available in the script.
+You can create additional beans of the type `com.agorapulse.micronaut.console.BindingProvider` to provide additional binding variables.
+
+You can see what are bindings are available in your application issuing `GET` request to `/console/dsl/text` endpoint:
+
+[source, shell script]
+----
+curl http://localhost:8080/console/dsl/text
+----
+
+You can download up-to-date DSL file from your server by altering the `text` part of the path. There are the following descriptors available
+
+* `gdsl` for Groovy and IntelliJ
+* `dsld` for Groovy and Eclipse
+
+[source,shell script]
+----
+ curl http://localhost:8080/console/dsl/gdsl > console.gdsl
+----
+
+== Serverless Functions
+
+You can use Micronaut Console to create sandbox function to execute arbitrary code on AWS Lambda or similar serverless function platforms.
+
+Add the following lines to your either existing or a brand new Micronaut function:
+
+[source, groovy]
+----
+include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=tasks]
+----
+
+Then you can invoke the function from the command line as follows (assuming you have set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_KEY` environment variables)
+
+[source,shell script]
+----
+./gradlew invokeSanbox -Pscript.file path/to/script.groovy
+----
+
+You should use a lambda role restricted to what you are planning to do with the sandbox function to maximize the security.
+
+== Server Applications
+
+The basic use case is to execute a script inside your HTTP server application.There are two endpoints
+`/console/execute` and `/console/execute/result`.Both endpoints
+accept the script as a body of a `POST` request, but the first one returns a JSON response
+whereas the second one plain text results.
+
+TIP: The base path `/console` can be altered using `console.path` configuration property.
+
+This is the example of the very simple Groovy script:
+
+[source,groovy]
+.Example Groovy Script
+----
+include::{root-dir}/libs/micronaut-console/src/test/resources/com/agorapulse/micronaut/console/http/ConsoleControllerSpec/printer.groovy[]
+----
+
+You can use either bash tools such as cURL to execute the script, or you can use IDE integrations such as builtin IntelliJ HTTP client.
+The `Content-Type` must match the mime type of language e.g. `text/groovy`, `application/javascript` or `text/x-kotlin`.
+
+[source,shell script,indent=0,role="primary"]
+.Bash Script
+----
+curl -X POST -H "Content-Type: text/groovy" --data-binary @printer.groovy "http://localhost:8080/console/execute/result"
+----
+
+[source,indent=0,role="secondary"]
+.IntelliJ HTTP Client with Inline Code
+----
+include::{root-dir}/examples/micronaut-console-example-application/src/test/resources/inline.http[tag=request]
+
+// language=groovy                                                                      <1>
+include::{root-dir}/libs/micronaut-console/src/test/resources/com/agorapulse/micronaut/console/http/ConsoleControllerSpec/printer.groovy[]
+----
+<1> IntelliJ hint to handle tho body of the request as Groovy code and give you all the content assist available
+
+[source,indent=0,role="secondary"]
+.IntelliJ HTTP Client with External Script
+----
+include::{root-dir}/examples/micronaut-console-example-application/src/test/resources/inline.http[tag=request]
+
+< printer.groovy                                                                        <1>
+----
+<1> Path to the script file which will get all the content assist available
+
+After execution, you will get the following results depending on an endpoint used:
+
+[source,indent=0,role="primary"]
+.Plain Text
+----
+include::{root-dir}/libs/micronaut-console/src/test/resources/com/agorapulse/micronaut/console/http/ConsoleControllerSpec/printer.txt[]
+----
+
+[source,json,indent=0,role="secondary"]
+.JSON
+----
+include::{root-dir}/libs/micronaut-console/src/test/resources/com/agorapulse/micronaut/console/http/ConsoleControllerSpec/printer.json[]
+----
+
+JSON responses are useful if you want to create a client for console endpoints.On the other hand,
+plain text responses are useful for shell and IDE executions.
+
+TIP: The `result` property returns a JSON representation of the last evaluated line, so it can also be a JavaScript
+object or array depending on the situation.
+
+== Security
+
+The security is very important as you can run arbitrary code using the console. By default, the console is disabled
+for the server applications running `cloud` environment which for example includes applications running AWS Elastic Beanstalk.
+For these deployments, you can either set `console.enabled` property to `true`, or you can set `console.until`
+to any ISO date in the future such as `2020-11-12T10:00:00Z`. The second option will enable to console only for a certain period.
+
+=== Address Filter
+
+You can specify from witch address the users can access the console
+
+[source]
+.Address Filter Configuration
+----
+console:
+include::{root-dir}/examples/micronaut-console-example-application/src/main/resources/application.yml[tags=address]
+----
+
+WARNING: The addresses must start with a forward slash `/`.
+
+=== User Filter
+
+You can specify witch users can access the console
+
+[source]
+.User FilterConfiguration
+----
+console:
+include::{root-dir}/examples/micronaut-console-example-application/src/main/resources/application.yml[tags=users]
+----
+
+You must use Micronaut Security Integration or define your own implementation of `TypedRequestArgumentBinder<User>` to
+get the username of the user.
+
+[source,java]
+.User Binder
+----
+include::{root-dir}/libs/micronaut-console/src/test/groovy/com/agorapulse/micronaut/console/http/SimpleUserBinder.java[lines=20..-1]
+----
+
+=== Micronaut Security Integration
+
+Micronaut Console integrates well with the Micronaut Security library.
+
+[source]
+.Micronaut Security Configuration
+----
+include::{root-dir}/examples/micronaut-console-example-application/src/main/resources/application.yml[tags=micronaut-security]
+----
+<1> Enable Micronaut Security
+<2> Enable login endpoint
+<3> Enable JWT token integration
+<4> JWT token generator's secret
+<5> Allow anonymous access for DSL files generation
+<6> Allow only authenticated users execute scripts
+
+==== Using Shell with Micronaut Security
+
+When you are running the scripts from shell then you need to do few extra steps to authenticate with the Micronaut Security
+
+First, create `credentials.json` file and add it to `.gitignore`.
+
+[source,json]
+.Shell Credentials File
+----
+include::{root-dir}/examples/micronaut-console-example-application/src/test/resources/credentials.json[]
+----
+
+Then you can create a shell script file which simplifies the console script execution:
+
+[source,shell script]
+.Shell Script `execute.sh`
+----
+include::{root-dir}/examples/micronaut-console-example-application/src/test/resources/execute.sh[lines=1;20..-1]
+----
+
+You can use the newly created shell script to execute the console scripts:
+
+[source,shell script]
+----
+./execute.sh external.groovy text/groovy http://localhost:8080
+----
+
+The mime type `text/groovy` is optional if it the same as `text/<extension>`.
+
+The host is optional if it is `http://localhost:8080`
+
+==== Using IntelliJ HTTP Files with Micronaut Security
+
+When you are running the scripts from IntelliJ then you need to do few extra steps to authenticate with the Micronaut Security.
+
+First, create `http-client.private.env.json` file and add it to `.gitignore`.
+
+[source,json]
+.IntelliJ Credentials File
+----
+include::{root-dir}/examples/micronaut-console-example-application/src/test/resources/credentials.json[]
+----
+
+You can have as many entries for different environment such as `test` as you wish.
+
+Then update the HTTP client file to include authentication:
+
+[source]
+.HTTP Clint file with Authentication
+----
+include::{root-dir}/examples/micronaut-console-example-application/src/test/resources/external.http[]
+----
+
+=== Auditing
+
+You can audit who was working with the Micronaut Console when you implement a bean of type `com.agorapulse.micronaut.console.AuditService`.
+There is a default implementation which logs using SLF4J.
+
+[source,java]
+----
+include::{root-dir}/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/DefaultAuditService.java[lines=20..-1]
+----
+
+=== Security Advisors
+
+You can add more customization such as role based access by implementing your own security advisor `com.agorapulse.micronaut.console.SecurityAdvisor`.
+
+Here is how the builtin advisors look like:
+
+[source,java]
+----
+include::{root-dir}/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/DefaultSecurityAdvisorFactory.java[lines=20..-1]
+----
+
+If any of the security advisors denies the execution then the script is not executed.
+
+=== Compilation Customizers
+
+Groovy programming language is the first-class citizen in Micronaut Console. You can customize the way how the Groovy script by implementing bean of type
+`com.agorapulse.micronaut.console.groovy.CompilerConfigurationCustomizer`.

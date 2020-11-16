@@ -1,4 +1,4 @@
-POST http://localhost:8080/login
+POST {{host}}/login
 Content-Type: application/json
 Accept: application/json
 
@@ -9,11 +9,10 @@ Accept: application/json
 
 > {%
     client.global.set("auth_token", response.body.access_token);
-    print("\nusing auth token: " + response.body.access_token + "\n");
 %}
 
 ###
-POST http://localhost:8080/console/execute/result
+POST {{host}}/console/execute/result
 Content-Type: text/groovy
 Accept: text/plain
 Authorization: Bearer {{auth_token}}

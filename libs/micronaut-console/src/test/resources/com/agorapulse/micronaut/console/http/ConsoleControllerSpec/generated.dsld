@@ -1,0 +1,5 @@
+enclosingScript().accept {
+
+    provider = 'Micronaut Console'
+    property(name: 'ctx', type: 'io.micronaut.context.DefaultApplicationContext')
+}

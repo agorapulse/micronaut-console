@@ -9,13 +9,14 @@ Accept: application/json
 
 > {%
     client.global.set("auth_token", response.body.access_token);
-    print("\nusing auth token: " + response.body.access_token + "\n");
 %}
 
 ###
+# tag::request[]
 POST http://localhost:8080/console/execute/result
 Content-Type: text/groovy
 Accept: text/plain
+# end::request[]
 Authorization: Bearer {{auth_token}}
 
 # language=groovy

@@ -1,0 +1,4 @@
+Available Variables:
+
+    ctx: io.micronaut.context.DefaultApplicationContext
+

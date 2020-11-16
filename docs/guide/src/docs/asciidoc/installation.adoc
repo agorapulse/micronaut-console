@@ -1,0 +1,28 @@
+
+[[_installation_]]
+= Installation
+
+Add the following dependency into your build file.
+
+.Gradle Installation
+[source,subs='verbatim,attributes']
+----
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'com.agorapulse:micronaut-console:{project-version}'
+
+    // for Groovy integration
+    implementation 'org.codehaus.groovy:groovy'
+
+    // for Kotlin integration
+    implementation "org.jetbrains.kotlin:kotlin-scripting-jsr223:${kotlinVersion}"
+
+    // for Micronaut Security integration
+    implementation "io.micronaut:micronaut-security"
+    implementation "io.micronaut:micronaut-security-jwt"
+
+}
+----

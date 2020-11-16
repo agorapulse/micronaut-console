@@ -112,8 +112,6 @@ class ConsoleControllerSpec extends Specification {
                 }
                 expect {
                     status BAD_REQUEST
-                    // this will be tricky to maintain but let's keep it here and update regularly
-                    // delete the file and let the test recreate it when this fails after update
                     text 'exceptional.txt'
                 }
             }
@@ -180,6 +178,36 @@ class ConsoleControllerSpec extends Specification {
                 }
                 expect {
                     status BAD_REQUEST
+                }
+            }
+    }
+
+    void 'get gdsl script'() {
+        expect:
+            gru.test {
+                get('/console/dsl/gdsl')
+                expect {
+                    text 'generated.gdsl'
+                }
+            }
+    }
+
+    void 'get dsld script'() {
+        expect:
+            gru.test {
+                get('/console/dsl/dsld')
+                expect {
+                    text 'generated.dsld'
+                }
+            }
+    }
+
+    void 'get text binding summary'() {
+        expect:
+            gru.test {
+                get('/console/dsl/text')
+                expect {
+                    text 'generated.txt'
                 }
             }
     }

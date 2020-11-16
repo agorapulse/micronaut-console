@@ -23,28 +23,38 @@ import com.agorapulse.micronaut.console.ExecutionResult;
 import com.agorapulse.micronaut.console.Script;
 import com.agorapulse.micronaut.console.ConsoleSecurityException;
 import com.agorapulse.micronaut.console.User;
+import com.agorapulse.micronaut.console.ide.DslGenerator;
+import com.agorapulse.micronaut.console.util.ExceptionSanitizer;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Error;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.hateoas.JsonError;
 
 import javax.annotation.Nullable;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Controller("${console.path:/console}")
 public class ConsoleController {
 
     private final ConsoleService service;
+    private final ExceptionSanitizer sanitizer;
+    private final Map<String, DslGenerator> generators;
 
-    public ConsoleController(ConsoleService service) {
+    public ConsoleController(ConsoleService service, ExceptionSanitizer sanitizer, List<DslGenerator> generatorList) {
         this.service = service;
+        this.sanitizer = sanitizer;
+        this.generators = generatorList.stream().collect(Collectors.toMap(DslGenerator::getScriptType, Function.identity()));
     }
 
     @Post("/execute")
@@ -61,24 +71,29 @@ public class ConsoleController {
         try {
             return HttpResponse.ok(service.execute(new Script(service.getLanguageForMimeType(contentType), body, user)).toString());
         } catch (ConsoleException e) {
-            return HttpResponse.badRequest(extractMessage(e) + "\n\n" + e.getScript());
+            return HttpResponse.badRequest(sanitizer.extractMessage(e) + "\n\n" + e.getScript());
         }
+    }
+
+    @Get("/dsl/{type}")
+    @Produces("text/plain")
+    public HttpResponse<String> generateDslFile(@PathVariable("type") String type) {
+        DslGenerator generator = generators.get(type);
+
+        if (generator == null) {
+            return HttpResponse.notFound("Generator for " + type + " does not exist! Available " + String.join(", ", generators.keySet()));
+        }
+
+        return HttpResponse.ok(generator.generateScript());
     }
 
     @Error(ConsoleException.class)
     public HttpResponse<JsonError> consoleException(ConsoleException exception) {
-        ScriptJsonError error = new ScriptJsonError(exception.getScript(), extractMessage(exception));
+        ScriptJsonError error = new ScriptJsonError(exception.getScript(), sanitizer.extractMessage(exception));
         if (exception instanceof ConsoleSecurityException) {
             return HttpResponse.unauthorized();
         }
         return HttpResponse.badRequest(error);
-    }
-
-    private String extractMessage(ConsoleException exception) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        exception.printStackTrace(pw);
-        return sw.toString();
     }
 
 }

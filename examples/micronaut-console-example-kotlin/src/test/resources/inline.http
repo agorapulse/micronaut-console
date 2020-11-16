@@ -1,0 +1,16 @@
+POST http://localhost:8080/console/execute/result
+Content-Type: text/x-kotlin
+Accept: text/plain
+
+# language=kotlin
+import com.agorapulse.micronaut.console.ConsoleService
+import com.agorapulse.micronaut.console.Script
+import com.agorapulse.micronaut.console.User
+
+val service: ConsoleService = ctx.getBean(ConsoleService::class.java)
+
+service.execute(Script("kotlin", "\"Hello World\"", User.anonymous()))
+
+
+
+

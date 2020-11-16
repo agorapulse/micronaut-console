@@ -1,3 +1,4 @@
+#!/bin/sh
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -16,13 +17,24 @@
 # limitations under the License.
 #
 
-slug=agorapulse/micronaut-console
-group=com.agorapulse
-version=1.0.0-SNAPSHOT
-kordampPluginVersion=0.41.0
-gitPublishPluginVersion=2.1.3
 
-micronautVersion = 1.2.8
-gruVersion = 0.8.4
-kotlinVersion=1.3.50
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: ./execute.sh script_file [host] [mimetype]"
+  exit 1
+fi
+
+script_file=$1
+
+default_host="http://localhost:8080"
+host=${2:-$default_host}
+
+extension="${1##*.}"
+default_mimetype="text/$extension"
+mimetype=${3:-$default_mimetype}
+
+curl -sS -X POST -H 'Content-Type: application/json' -d @credentials.json -o token.json "$host/login"
+curl -X POST -H "Content-Type: $mimetype" -H "Authorization: Bearer $(jq -r .access_token token.json)" --data-binary @"$script_file" "$host/console/execute/result"
+rm token.json
+echo
 
