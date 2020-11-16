@@ -1,0 +1,8 @@
+com.agorapulse.micronaut.console
+com.agorapulse.micronaut.console.function
+com.agorapulse.micronaut.console.groovy
+com.agorapulse.micronaut.console.http
+com.agorapulse.micronaut.console.ide
+com.agorapulse.micronaut.console.jsr223
+com.agorapulse.micronaut.console.util
+micronaut.console.example

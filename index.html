@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<meta name="author" content="Vladimir Orany">
+<title>Micronaut Console</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+.hidden {
+    display: none;
+}
+
+.switch {
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: #7a2518;
+    display: inline-block;
+}
+
+.switch--item {
+    padding: 10px;
+    background-color: #ffffff;
+    color: #7a2518;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.switch--item.selected {
+    background-color: #7a2519;
+    color: #ffffff;
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+    $('.primary').each(function() {
+        primary = $(this);
+        createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+        primary.children('.title').remove();
+    });
+    $('.secondary').each(function(idx, node) {
+        secondary = $(node);
+        primary = findPrimary(secondary);
+        switchItem = createSwitchItem(secondary, primary.children('.switch'));
+        switchItem.content.addClass('hidden');
+        findPrimary(secondary).append(switchItem.content);
+        secondary.remove();
+    });
+}
+
+function createBlockSwitch(primary) {
+    blockSwitch = $('<div class="switch"></div>');
+    primary.prepend(blockSwitch);
+    return blockSwitch;
+}
+
+function findPrimary(secondary) {
+    candidate = secondary.prev();
+    while (!candidate.is('.primary')) {
+        candidate = candidate.prev();
+    }
+    return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+    blockName = block.children('.title').text();
+    content = block.children('.content').first().append(block.next('.colist'));
+    item = $('<div class="switch--item">' + blockName + '</div>');
+    item.on('click', '', content, function(e) {
+        $(this).addClass('selected');
+        $(this).siblings().removeClass('selected');
+        e.data.siblings('.content').addClass('hidden');
+        e.data.removeClass('hidden');
+    });
+    blockSwitch.append(item);
+    return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+
+</script>
+
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1>Micronaut Console</h1>
+<div class="details">
+<span id="author" class="author">Vladimir Orany</span><br>
+<span id="revnumber">version 1.0.0</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introduction">1. Introduction</a></li>
+<li><a href="#_installation_">2. Installation</a></li>
+<li><a href="#_usage">3. Usage</a>
+<ul class="sectlevel2">
+<li><a href="#_script_variables">3.1. Script Variables</a></li>
+<li><a href="#_serverless_functions">3.2. Serverless Functions</a></li>
+<li><a href="#_server_applications">3.3. Server Applications</a></li>
+<li><a href="#_security">3.4. Security</a>
+<ul class="sectlevel3">
+<li><a href="#_address_filter">3.4.1. Address Filter</a></li>
+<li><a href="#_user_filter">3.4.2. User Filter</a></li>
+<li><a href="#_micronaut_security_integration">3.4.3. Micronaut Security Integration</a>
+<ul class="sectlevel4">
+<li><a href="#_using_shell_with_micronaut_security">Using Shell with Micronaut Security</a></li>
+<li><a href="#_using_intellij_http_files_with_micronaut_security">Using IntelliJ HTTP Files with Micronaut Security</a></li>
+</ul>
+</li>
+<li><a href="#_auditing">3.4.4. Auditing</a></li>
+<li><a href="#_security_advisors">3.4.5. Security Advisors</a></li>
+<li><a href="#_compilation_customizers">3.4.6. Compilation Customizers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_links">4. Links</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction"><a class="anchor" href="#_introduction"></a>1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Micronaut Console is extension to the <a href="https://micronaut.io/">Micronaut</a> applications and functions
+which allows executing arbitrary code. The project has been inspired by the <a href="https://github.com/sheehan/grails-console">Grails Console Plugin</a>.
+The console does not provide any web UI but it allows you to leverage the power of your IDE. Micronaut Console provides out-of-box support
+for Groovy and for any JSR223 compatible scripting engine such as built-in Ecmascript Nashorn engine or Kotlin script JSR223 wrapper.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_installation_"><a class="anchor" href="#_installation_"></a>2. Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Add the following dependency into your build file.</p>
+</div>
+<div class="listingblock">
+<div class="title">Gradle Installation</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'com.agorapulse:micronaut-console:1.0.0'
+
+    // for Groovy integration
+    implementation 'org.codehaus.groovy:groovy'
+
+    // for Kotlin integration
+    implementation "org.jetbrains.kotlin:kotlin-scripting-jsr223:${kotlinVersion}"
+
+    // for Micronaut Security integration
+    implementation "io.micronaut:micronaut-security"
+    implementation "io.micronaut:micronaut-security-jwt"
+
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usage"><a class="anchor" href="#_usage"></a>3. Usage</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_script_variables"><a class="anchor" href="#_script_variables"></a>3.1. Script Variables</h3>
+<div class="paragraph">
+<p>By default, there is a single variable <code>ctx</code> of the type <code>io.micronaut.context.ApplicationContext</code> available in the script.
+You can create additional beans of the type <code>com.agorapulse.micronaut.console.BindingProvider</code> to provide additional binding variables.</p>
+</div>
+<div class="paragraph">
+<p>You can see what are bindings are available in your application issuing <code>GET</code> request to <code>/console/dsl/text</code> endpoint:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="shell script">curl http://localhost:8080/console/dsl/text</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can download up-to-date DSL file from your server by altering the <code>text</code> part of the path. There are the following descriptors available</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>gdsl</code> for Groovy and IntelliJ</p>
+</li>
+<li>
+<p><code>dsld</code> for Groovy and Eclipse</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="shell script"> curl http://localhost:8080/console/dsl/gdsl &gt; console.gdsl</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_serverless_functions"><a class="anchor" href="#_serverless_functions"></a>3.2. Serverless Functions</h3>
+<div class="paragraph">
+<p>You can use Micronaut Console to create sandbox function to execute arbitrary code on AWS Lambda or similar serverless function platforms.</p>
+</div>
+<div class="paragraph">
+<p>Add the following lines to your either existing or a brand new Micronaut function:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">task deploySandbox(type: AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
+    functionName = "MicronautConsoleSandbox"
+    handler = "com.agorapulse.micronaut.console.function.ConsoleHandler::apply"
+    role = "arn:aws:iam::${aws.accountId}:role/lambda_basic_execution"
+    runtime = Runtime.Java8
+    zipFile = shadowJar.archivePath
+    memorySize = 512
+    timeout = 60
+}
+
+task invokeSandbox(type: AWSLambdaInvokeTask) {
+    File scriptFile = file(project.hasProperty('script.file') ? project.getProperty('script.file') : 'src/test/resources/scripts/hello.sandbox.groovy')
+
+    functionName = 'MicronautConsoleSandbox'
+    invocationType = InvocationType.RequestResponse
+    payload = JsonOutput.toJson(scriptFile.text)
+
+    doLast {
+        println "\nLambda function result:\n"
+        println new JsonSlurper().parseText(new String(invokeResult.payload.array(), "UTF-8"))
+        println()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then you can invoke the function from the command line as follows (assuming you have set <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_KEY</code> environment variables)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="shell script">./gradlew invokeSanbox -Pscript.file path/to/script.groovy</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should use a lambda role restricted to what you are planning to do with the sandbox function to maximize the security.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_server_applications"><a class="anchor" href="#_server_applications"></a>3.3. Server Applications</h3>
+<div class="paragraph">
+<p>The basic use case is to execute a script inside your HTTP server application.There are two endpoints
+<code>/console/execute</code> and <code>/console/execute/result</code>.Both endpoints
+accept the script as a body of a <code>POST</code> request, but the first one returns a JSON response
+whereas the second one plain text results.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The base path <code>/console</code> can be altered using <code>console.path</code> configuration property.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This is the example of the very simple Groovy script:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example Groovy Script</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">println "This is a debug message"
+
+"Hello Developer!"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use either bash tools such as cURL to execute the script, or you can use IDE integrations such as builtin IntelliJ HTTP client.
+The <code>Content-Type</code> must match the mime type of language e.g. <code>text/groovy</code>, <code>application/javascript</code> or <code>text/x-kotlin</code>.</p>
+</div>
+<div class="listingblock primary">
+<div class="title">Bash Script</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="shell script">curl -X POST -H "Content-Type: text/groovy" --data-binary @printer.groovy "http://localhost:8080/console/execute/result"</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">IntelliJ HTTP Client with Inline Code</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>POST http://localhost:8080/console/execute/result
+Content-Type: text/groovy
+Accept: text/plain
+
+// language=groovy                                                                      <i class="conum" data-value="1"></i><b>(1)</b>
+println "This is a debug message"
+
+"Hello Developer!"</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>IntelliJ hint to handle tho body of the request as Groovy code and give you all the content assist available</td>
+</tr>
+</table>
+</div>
+<div class="listingblock secondary">
+<div class="title">IntelliJ HTTP Client with External Script</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>POST http://localhost:8080/console/execute/result
+Content-Type: text/groovy
+Accept: text/plain
+
+&lt; printer.groovy                                                                        <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Path to the script file which will get all the content assist available</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>After execution, you will get the following results depending on an endpoint used:</p>
+</div>
+<div class="listingblock primary">
+<div class="title">Plain Text</div>
+<div class="content">
+<pre class="prettyprint highlight"><code># Out #
+This is a debug message
+
+# Result #
+Hello Developer!</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">JSON</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="json">{
+    "result": "Hello Developer!",
+    "out": "This is a debug message\n"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>JSON responses are useful if you want to create a client for console endpoints.On the other hand,
+plain text responses are useful for shell and IDE executions.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The <code>result</code> property returns a JSON representation of the last evaluated line, so it can also be a JavaScript
+object or array depending on the situation.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_security"><a class="anchor" href="#_security"></a>3.4. Security</h3>
+<div class="paragraph">
+<p>The security is very important as you can run arbitrary code using the console. By default, the console is disabled
+for the server applications running <code>cloud</code> environment which for example includes applications running AWS Elastic Beanstalk.
+For these deployments, you can either set <code>console.enabled</code> property to <code>true</code>, or you can set <code>console.until</code>
+to any ISO date in the future such as <code>2020-11-12T10:00:00Z</code>. The second option will enable to console only for a certain period.</p>
+</div>
+<div class="sect3">
+<h4 id="_address_filter"><a class="anchor" href="#_address_filter"></a>3.4.1. Address Filter</h4>
+<div class="paragraph">
+<p>You can specify from witch address the users can access the console</p>
+</div>
+<div class="listingblock">
+<div class="title">Address Filter Configuration</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>console:
+  addresses:
+    - /127.0.0.1
+    - /0:0:0:0:0:0:0:1</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+The addresses must start with a forward slash <code>/</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_user_filter"><a class="anchor" href="#_user_filter"></a>3.4.2. User Filter</h4>
+<div class="paragraph">
+<p>You can specify witch users can access the console</p>
+</div>
+<div class="listingblock">
+<div class="title">User FilterConfiguration</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>console:
+  users:
+    - sherlock</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You must use Micronaut Security Integration or define your own implementation of <code>TypedRequestArgumentBinder&lt;User&gt;</code> to
+get the username of the user.</p>
+</div>
+<div class="listingblock">
+<div class="title">User Binder</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">import com.agorapulse.micronaut.console.User;
+import io.micronaut.context.annotation.Replaces;
+import io.micronaut.core.convert.ArgumentConversionContext;
+import io.micronaut.core.type.Argument;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.bind.binders.TypedRequestArgumentBinder;
+
+import javax.inject.Singleton;
+
+@Singleton
+@Replaces(AnonymousUserArgumentBinder.class)
+public class SimpleUserBinder implements TypedRequestArgumentBinder&lt;User&gt; {
+
+    private final AnonymousUserArgumentBinder delegate = new AnonymousUserArgumentBinder();
+
+    @Override
+    public Argument&lt;User&gt; argumentType() {
+        return delegate.argumentType();
+    }
+
+    @Override
+    public BindingResult&lt;User&gt; bind(ArgumentConversionContext&lt;User&gt; context, HttpRequest&lt;?&gt; source) {
+        return () -&gt; delegate.bind(context, source).getValue().map(u -&gt; new User(
+            source.getHeaders().get("X-Console-User"),
+            source.getHeaders().get("X-Console-Name"),
+            u.getAddress()
+        ));
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_micronaut_security_integration"><a class="anchor" href="#_micronaut_security_integration"></a>3.4.3. Micronaut Security Integration</h4>
+<div class="paragraph">
+<p>Micronaut Console integrates well with the Micronaut Security library.</p>
+</div>
+<div class="listingblock">
+<div class="title">Micronaut Security Configuration</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>micronaut:
+  security:
+    enabled: true                                                                       <i class="conum" data-value="1"></i><b>(1)</b>
+    endpoints:
+      login:
+        enabled: true                                                                   <i class="conum" data-value="2"></i><b>(2)</b>
+    token:
+      jwt:
+        enabled: true                                                                   <i class="conum" data-value="3"></i><b>(3)</b>
+        signatures:
+          secret:
+            generator:
+              secret: pleaseChangeThisSecretForANewOne                                  <i class="conum" data-value="4"></i><b>(4)</b>
+    intercept-url-map:
+      - pattern: /console/**                                                            <i class="conum" data-value="5"></i><b>(5)</b>
+        http-method: GET
+        access:
+          - isAnonymous()
+      - pattern: /console/**                                                            <i class="conum" data-value="6"></i><b>(6)</b>
+        http-method: POST
+        access:
+          - isAuthenticated()</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable Micronaut Security</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Enable login endpoint</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Enable JWT token integration</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>JWT token generator&#8217;s secret</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Allow anonymous access for DSL files generation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Allow only authenticated users execute scripts</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_using_shell_with_micronaut_security"><a class="anchor" href="#_using_shell_with_micronaut_security"></a>Using Shell with Micronaut Security</h5>
+<div class="paragraph">
+<p>When you are running the scripts from shell then you need to do few extra steps to authenticate with the Micronaut Security</p>
+</div>
+<div class="paragraph">
+<p>First, create <code>credentials.json</code> file and add it to <code>.gitignore</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Shell Credentials File</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="json">{
+    "username": "sherlock",
+    "password": "password"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then you can create a shell script file which simplifies the console script execution:</p>
+</div>
+<div class="listingblock">
+<div class="title">Shell Script <code>execute.sh</code></div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="shell script">#!/bin/sh
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: ./execute.sh script_file [host] [mimetype]"
+  exit 1
+fi
+
+script_file=$1
+
+default_host="http://localhost:8080"
+host=${2:-$default_host}
+
+extension="${1##*.}"
+default_mimetype="text/$extension"
+mimetype=${3:-$default_mimetype}
+
+curl -sS -X POST -H 'Content-Type: application/json' -d @credentials.json -o token.json "$host/login"
+curl -X POST -H "Content-Type: $mimetype" -H "Authorization: Bearer $(jq -r .access_token token.json)" --data-binary @"$script_file" "$host/console/execute/result"
+rm token.json
+echo</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use the newly created shell script to execute the console scripts:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="shell script">./execute.sh external.groovy text/groovy http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The mime type <code>text/groovy</code> is optional if it the same as <code>text/&lt;extension&gt;</code>.</p>
+</div>
+<div class="paragraph">
+<p>The host is optional if it is <code><a href="http://localhost:8080" class="bare">http://localhost:8080</a></code></p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_using_intellij_http_files_with_micronaut_security"><a class="anchor" href="#_using_intellij_http_files_with_micronaut_security"></a>Using IntelliJ HTTP Files with Micronaut Security</h5>
+<div class="paragraph">
+<p>When you are running the scripts from IntelliJ then you need to do few extra steps to authenticate with the Micronaut Security.</p>
+</div>
+<div class="paragraph">
+<p>First, create <code>http-client.private.env.json</code> file and add it to <code>.gitignore</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">IntelliJ Credentials File</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="json">{
+    "username": "sherlock",
+    "password": "password"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can have as many entries for different environment such as <code>test</code> as you wish.</p>
+</div>
+<div class="paragraph">
+<p>Then update the HTTP client file to include authentication:</p>
+</div>
+<div class="listingblock">
+<div class="title">HTTP Clint file with Authentication</div>
+<div class="content">
+<pre class="prettyprint highlight"><code>POST {{host}}/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+&gt; {%
+    client.global.set("auth_token", response.body.access_token);
+%}
+
+###
+POST {{host}}/console/execute/result
+Content-Type: text/groovy
+Accept: text/plain
+Authorization: Bearer {{auth_token}}
+
+&lt; external.groovy</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_auditing"><a class="anchor" href="#_auditing"></a>3.4.4. Auditing</h4>
+<div class="paragraph">
+<p>You can audit who was working with the Micronaut Console when you implement a bean of type <code>com.agorapulse.micronaut.console.AuditService</code>.
+There is a default implementation which logs using SLF4J.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Singleton;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Map;
+
+@Singleton
+public class DefaultAuditService implements AuditService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuditService.class);
+
+    @Override
+    public void beforeExecute(Script script, Map&lt;String, Object&gt; bindings) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Before execution:\n" + script + "\n\nBindings: " + bindings);
+        }
+    }
+
+    @Override
+    public void afterExecute(Script script, ExecutionResult result) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("After execution:\n" + script + "\n\nResult:\n" + result);
+        }
+    }
+
+    @Override
+    public void onError(Script script, Throwable throwable) {
+        if (LOGGER.isInfoEnabled()) {
+            StringWriter sw = new StringWriter();
+            PrintWriter writer = new PrintWriter(sw);
+            throwable.printStackTrace(writer);
+            LOGGER.debug("Execution error:\n" + script + "\n\n" + sw.toString());
+        }
+    }
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_security_advisors"><a class="anchor" href="#_security_advisors"></a>3.4.5. Security Advisors</h4>
+<div class="paragraph">
+<p>You can add more customization such as role based access by implementing your own security advisor <code>com.agorapulse.micronaut.console.SecurityAdvisor</code>.</p>
+</div>
+<div class="paragraph">
+<p>Here is how the builtin advisors look like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">import io.micronaut.context.ApplicationContext;
+import io.micronaut.context.annotation.Bean;
+import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
+
+import javax.inject.Singleton;
+import java.time.Instant;
+
+@Factory
+public class DefaultSecurityAdvisorFactory {
+
+    @Bean
+    @Singleton
+    @Requires(property = "console.addresses")
+    public SecurityAdvisor addressFilter(ConsoleConfiguration configuration) {
+        return script -&gt; {
+            if (script.getUser() == null || script.getUser().getAddress() == null) {
+                // address must be known
+                return false;
+            }
+            return configuration.getAddresses().contains(script.getUser().getAddress());
+        };
+    }
+
+    @Bean
+    @Singleton
+    @Requires(property = "console.users")
+    public SecurityAdvisor userFilter(ConsoleConfiguration configuration) {
+        return script -&gt; {
+            if (script.getUser() == null || script.getUser().getId() == null) {
+                // id must be known
+                return false;
+            }
+            return configuration.getUsers().contains(script.getUser().getId());
+        };
+    }
+
+    @Bean
+    @Singleton
+    @Requires(property = "console.until")
+    public SecurityAdvisor untilWindow(ConsoleConfiguration configuration) {
+        return script -&gt; Instant.now().isBefore(configuration.convertUntil());
+    }
+
+    @Bean
+    @Singleton
+    public SecurityAdvisor consoleEnabled(ApplicationContext context, ConsoleConfiguration configuration) {
+        return script -&gt; {
+            if (configuration.isEnabled()) {
+                return true;
+            }
+
+            // functions has their own security checks
+            if (context.getEnvironment().getActiveNames().contains(Environment.FUNCTION)) {
+                return true;
+            }
+
+            // disable by default for the cloud environment (deployed apps)
+            return !context.getEnvironment().getActiveNames().contains(Environment.CLOUD);
+        };
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If any of the security advisors denies the execution then the script is not executed.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_compilation_customizers"><a class="anchor" href="#_compilation_customizers"></a>3.4.6. Compilation Customizers</h4>
+<div class="paragraph">
+<p>Groovy programming language is the first-class citizen in Micronaut Console. You can customize the way how the Groovy script by implementing bean of type
+<code>com.agorapulse.micronaut.console.groovy.CompilerConfigurationCustomizer</code>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_links"><a class="anchor" href="#_links"></a>4. Links</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="api/index.html" target="_blank" rel="noopener">Javadoc</a></p>
+</div>
+<div class="paragraph">
+<p><a href="api-html/index.html" target="_blank" rel="noopener">Source</a></p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 1.0.0<br>
+Last updated 2020-11-16 16:21:51 UTC
+</div>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.min.js"></script>
+</body>
+</html>
