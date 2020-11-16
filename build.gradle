@@ -95,10 +95,18 @@ config {
             toolVersion = '1.5'
         }
     }
-    
+
     coverage {
         coveralls {
             enabled = true
+        }
+    }
+
+    docs {
+        groovydoc {
+            aggregate {
+                enabled = false
+            }
         }
     }
 
