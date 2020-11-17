@@ -21,6 +21,14 @@ name: Check
 on: [push, pull_request]
 jobs:
   check:
+    strategy:
+      fail-fast: false
+      matrix: 
+        micronaut:
+          - 1.2.11
+          - 1.3.7
+          - 2.0.3
+          - 2.1.3
     name: Check
     runs-on: ubuntu-latest
     env:
@@ -42,9 +50,16 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-    - uses: eskatos/gradle-command-action@v1
+    - name: Test with Micronaut ${{ matrix.micronaut }} (release version)
+      uses: eskatos/gradle-command-action@v1
+      if: startsWith(matrix.micronaut, '1.2')
       with:
-        arguments: check coveralls --stacktrace
+        arguments: check coveralls --stacktrace  -PmicronautVersion=${{ matrix.micronaut }}
+    - name: Test with Micronaut ${{ matrix.micronaut }}
+      uses: eskatos/gradle-command-action@v1
+      if: startsWith(matrix.micronaut, '1.2') != true
+      with:
+        arguments: check --stacktrace  -PmicronautVersion=${{ matrix.micronaut }}
     - name: Show Reports
       uses: actions/upload-artifact@v1
       if: failure()

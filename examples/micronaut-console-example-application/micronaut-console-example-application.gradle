@@ -53,6 +53,7 @@ dependencies {
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
 
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
+    testImplementation "junit:junit:4.13.1"
     testImplementation("org.spockframework:spock-core") {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
