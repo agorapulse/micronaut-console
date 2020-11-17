@@ -117,7 +117,7 @@ to any ISO date in the future such as `2020-11-12T10:00:00Z`. The second option 
 
 === Address Filter
 
-You can specify from witch address the users can access the console
+You can specify from which address the users can access the console
 
 [source]
 .Address Filter Configuration
@@ -130,7 +130,7 @@ WARNING: The addresses must start with a forward slash `/`.
 
 === User Filter
 
-You can specify witch users can access the console
+You can specify which users can access the console
 
 [source]
 .User FilterConfiguration
