@@ -41,6 +41,7 @@ dependencies {
     testCompile "io.micronaut:micronaut-inject-groovy"
     testCompile "io.micronaut:micronaut-http-server-netty"
 
+    testCompile "junit:junit:4.13.1"
     testCompile("org.spockframework:spock-core") {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
