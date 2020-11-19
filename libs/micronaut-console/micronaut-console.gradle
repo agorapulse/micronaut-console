@@ -24,13 +24,14 @@ config {
 
 dependencies {
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
-    compile platform("io.micronaut:micronaut-bom:$micronautVersion")
+    implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     testCompile platform("io.micronaut:micronaut-bom:$micronautVersion")
 
     annotationProcessor "io.micronaut:micronaut-inject-java"
 
-    compile "io.micronaut:micronaut-core"
+    implementation "io.micronaut:micronaut-core"
+
     compileOnly "io.micronaut:micronaut-inject-groovy"
 
     compileOnly 'io.micronaut:micronaut-http'
@@ -38,16 +39,16 @@ dependencies {
 
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
 
-    testCompile "io.micronaut:micronaut-inject-groovy"
-    testCompile "io.micronaut:micronaut-http-server-netty"
+    testImplementation "io.micronaut:micronaut-inject-groovy"
+    testImplementation "io.micronaut:micronaut-http-server-netty"
 
-    testCompile("org.spockframework:spock-core") {
+    testImplementation("org.spockframework:spock-core") {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
 
-    testCompile "com.agorapulse:gru-http:$gruVersion"
+    testImplementation "com.agorapulse:gru-http:$gruVersion"
 
-    testCompile 'io.micronaut:micronaut-function'
+    testImplementation 'io.micronaut:micronaut-function'
 
-    testCompile "org.apache.logging.log4j:log4j-slf4j18-impl:2.13.3"
+    testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:2.13.3"
 }
