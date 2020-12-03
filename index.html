@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Console</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.0.1</span>
+<span id="revnumber">version 1.0.2</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -151,7 +151,7 @@ for Groovy and for any JSR223 compatible scripting engine such as built-in Ecmas
 }
 
 dependencies {
-    implementation 'com.agorapulse:micronaut-console:1.0.1'
+    implementation 'com.agorapulse:micronaut-console:1.0.2'
 
     // for Groovy integration
     implementation 'org.codehaus.groovy:groovy'
@@ -688,70 +688,7 @@ public class DefaultAuditService implements AuditService {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="java">import io.micronaut.context.ApplicationContext;
-import io.micronaut.context.annotation.Bean;
-import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Requires;
-import io.micronaut.context.env.Environment;
-
-import javax.inject.Singleton;
-import java.time.Instant;
-
-@Factory
-public class DefaultSecurityAdvisorFactory {
-
-    @Bean
-    @Singleton
-    @Requires(property = "console.addresses")
-    public SecurityAdvisor addressFilter(ConsoleConfiguration configuration) {
-        return script -&gt; {
-            if (script.getUser() == null || script.getUser().getAddress() == null) {
-                // address must be known
-                return false;
-            }
-            return configuration.getAddresses().contains(script.getUser().getAddress());
-        };
-    }
-
-    @Bean
-    @Singleton
-    @Requires(property = "console.users")
-    public SecurityAdvisor userFilter(ConsoleConfiguration configuration) {
-        return script -&gt; {
-            if (script.getUser() == null || script.getUser().getId() == null) {
-                // id must be known
-                return false;
-            }
-            return configuration.getUsers().contains(script.getUser().getId());
-        };
-    }
-
-    @Bean
-    @Singleton
-    @Requires(property = "console.until")
-    public SecurityAdvisor untilWindow(ConsoleConfiguration configuration) {
-        return script -&gt; Instant.now().isBefore(configuration.convertUntil());
-    }
-
-    @Bean
-    @Singleton
-    public SecurityAdvisor consoleEnabled(ApplicationContext context, ConsoleConfiguration configuration) {
-        return script -&gt; {
-            if (configuration.isEnabled()) {
-                return true;
-            }
-
-            // functions has their own security checks
-            if (context.getEnvironment().getActiveNames().contains(Environment.FUNCTION)) {
-                return true;
-            }
-
-            // disable by default for the cloud environment (deployed apps)
-            return !context.getEnvironment().getActiveNames().contains(Environment.CLOUD);
-        };
-    }
-
-}</code></pre>
+<pre class="prettyprint highlight"><code data-lang="java">Unresolved directive in usage.adoc - include::/home/runner/work/micronaut-console/micronaut-console/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/DefaultSecurityAdvisorFactory.java[lines=20..-1]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -782,8 +719,8 @@ public class DefaultSecurityAdvisorFactory {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.1<br>
-Last updated 2020-11-19 10:10:26 UTC
+Version 1.0.2<br>
+Last updated 2020-12-03 16:26:28 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

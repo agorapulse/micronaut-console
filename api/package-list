@@ -1,4 +1,5 @@
 com.agorapulse.micronaut.console
+com.agorapulse.micronaut.console.advisors
 com.agorapulse.micronaut.console.function
 com.agorapulse.micronaut.console.groovy
 com.agorapulse.micronaut.console.http
