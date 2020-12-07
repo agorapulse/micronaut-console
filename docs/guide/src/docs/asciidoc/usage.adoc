@@ -31,6 +31,8 @@ Add the following lines to your either existing or a brand new Micronaut functio
 
 [source, groovy]
 ----
+include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=import]
+
 include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=tasks]
 ----
 
