@@ -1,9 +1,11 @@
+// tag::import[]
 import com.amazonaws.services.lambda.model.InvocationType
 import com.amazonaws.services.lambda.model.Runtime
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import jp.classmethod.aws.gradle.lambda.AWSLambdaInvokeTask
 import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
+// end::import[]
 
 /*
  * SPDX-License-Identifier: Apache-2.0
