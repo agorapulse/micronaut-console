@@ -8,7 +8,7 @@ Add the following dependency into your build file.
 [source,subs='verbatim,attributes']
 ----
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
