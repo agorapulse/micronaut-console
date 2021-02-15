@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Console</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.0.2</span>
+<span id="revnumber">version 1.0.3</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -151,7 +151,7 @@ for Groovy and for any JSR223 compatible scripting engine such as built-in Ecmas
 }
 
 dependencies {
-    implementation 'com.agorapulse:micronaut-console:1.0.2'
+    implementation 'com.agorapulse:micronaut-console:1.0.3'
 
     // for Groovy integration
     implementation 'org.codehaus.groovy:groovy'
@@ -214,7 +214,14 @@ You can create additional beans of the type <code>com.agorapulse.micronaut.conso
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="groovy">task deploySandbox(type: AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
+<pre class="prettyprint highlight"><code data-lang="groovy">import com.amazonaws.services.lambda.model.InvocationType
+import com.amazonaws.services.lambda.model.Runtime
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import jp.classmethod.aws.gradle.lambda.AWSLambdaInvokeTask
+import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
+
+task deploySandbox(type: AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
     functionName = "MicronautConsoleSandbox"
     handler = "com.agorapulse.micronaut.console.function.ConsoleHandler::apply"
     role = "arn:aws:iam::${aws.accountId}:role/lambda_basic_execution"
@@ -719,8 +726,8 @@ public class DefaultAuditService implements AuditService {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.2<br>
-Last updated 2020-12-03 16:26:28 UTC
+Version 1.0.3<br>
+Last updated 2021-02-15 11:00:21 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
