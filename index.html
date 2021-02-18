@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Console</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.0.3</span>
+<span id="revnumber">version 1.0.4</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -151,7 +151,7 @@ for Groovy and for any JSR223 compatible scripting engine such as built-in Ecmas
 }
 
 dependencies {
-    implementation 'com.agorapulse:micronaut-console:1.0.3'
+    implementation 'com.agorapulse:micronaut-console:1.0.4'
 
     // for Groovy integration
     implementation 'org.codehaus.groovy:groovy'
@@ -694,8 +694,156 @@ public class DefaultAuditService implements AuditService {
 <p>Here is how the builtin advisors look like:</p>
 </div>
 <div class="listingblock">
+<div class="title">Address Advisor</div>
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="java">Unresolved directive in usage.adoc - include::/home/runner/work/micronaut-console/micronaut-console/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/DefaultSecurityAdvisorFactory.java[lines=20..-1]</code></pre>
+<pre class="prettyprint highlight"><code data-lang="java">import com.agorapulse.micronaut.console.ConsoleConfiguration;
+import com.agorapulse.micronaut.console.Script;
+import com.agorapulse.micronaut.console.SecurityAdvisor;
+import io.micronaut.context.annotation.Requires;
+
+import javax.inject.Singleton;
+
+@Singleton
+@Requires(property = "console.addresses")
+public class AddressAdvisor implements SecurityAdvisor {
+
+    private final ConsoleConfiguration configuration;
+
+    public AddressAdvisor(ConsoleConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    @Override
+    public boolean isExecutionAllowed(Script script) {
+        if (script.getUser() == null || script.getUser().getAddress() == null) {
+            // address must be known
+            return false;
+        }
+        return configuration.getAddresses().contains(script.getUser().getAddress());
+    }
+
+    @Override
+    public String toString() {
+        return "Address advisor for addresses " + String.join(", ", configuration.getAddresses());
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Cloud Advisor</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">import com.agorapulse.micronaut.console.ConsoleConfiguration;
+import com.agorapulse.micronaut.console.Script;
+import com.agorapulse.micronaut.console.SecurityAdvisor;
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.context.env.Environment;
+
+import javax.inject.Singleton;
+
+@Singleton
+public class CloudAdvisor implements SecurityAdvisor {
+
+    private final ConsoleConfiguration configuration;
+    private final ApplicationContext context;
+
+    public CloudAdvisor(ConsoleConfiguration configuration, ApplicationContext context) {
+        this.configuration = configuration;
+        this.context = context;
+    }
+
+    @Override
+    public boolean isExecutionAllowed(Script script) {
+        if (configuration.isEnabled()) {
+            return true;
+        }
+
+        // functions has their own security checks
+        if (context.getEnvironment().getActiveNames().contains(Environment.FUNCTION)) {
+            return true;
+        }
+
+        // disable by default for the cloud environment (deployed apps)
+        return !context.getEnvironment().getActiveNames().contains(Environment.CLOUD);
+    }
+
+    @Override
+    public String toString() {
+        return "Cloud advisor for environments " + String.join(", ", context.getEnvironment().getActiveNames()) + ", enabled = " + configuration.isEnabled();
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Until Advisor</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">import com.agorapulse.micronaut.console.ConsoleConfiguration;
+import com.agorapulse.micronaut.console.Script;
+import com.agorapulse.micronaut.console.SecurityAdvisor;
+import io.micronaut.context.annotation.Requires;
+
+import javax.inject.Singleton;
+import java.time.Instant;
+
+@Singleton
+@Requires(property = "console.until")
+public class UntilAdvisor implements SecurityAdvisor {
+
+    private final ConsoleConfiguration configuration;
+
+    public UntilAdvisor(ConsoleConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    @Override
+    public boolean isExecutionAllowed(Script script) {
+        return Instant.now().isBefore(configuration.convertUntil());
+    }
+
+    @Override
+    public String toString() {
+        return "Until advisor for date before " + configuration.convertUntil();
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Users Advisor</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">import com.agorapulse.micronaut.console.ConsoleConfiguration;
+import com.agorapulse.micronaut.console.Script;
+import com.agorapulse.micronaut.console.SecurityAdvisor;
+import io.micronaut.context.annotation.Requires;
+
+import javax.inject.Singleton;
+
+@Singleton
+@Requires(property = "console.users")
+public class UsersAdvisor implements SecurityAdvisor {
+
+    private final ConsoleConfiguration configuration;
+
+    public UsersAdvisor(ConsoleConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    @Override
+    public boolean isExecutionAllowed(Script script) {
+        if (script.getUser() == null || script.getUser().getId() == null) {
+            // id must be known
+            return false;
+        }
+        return configuration.getUsers().contains(script.getUser().getId());
+    }
+
+    @Override
+    public String toString() {
+        return "Users advisor for user IDs " + String.join(", ", configuration.getUsers());
+    }
+
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -726,8 +874,8 @@ public class DefaultAuditService implements AuditService {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.3<br>
-Last updated 2021-02-16 17:15:25 UTC
+Version 1.0.4<br>
+Last updated 2021-02-18 10:04:20 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
