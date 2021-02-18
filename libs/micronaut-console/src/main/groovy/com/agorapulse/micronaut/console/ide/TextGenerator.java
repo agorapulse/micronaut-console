@@ -23,6 +23,8 @@ import javax.inject.Singleton;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 @Singleton
 public class TextGenerator implements DslGenerator {
@@ -41,11 +43,14 @@ public class TextGenerator implements DslGenerator {
         pw.println("Available Variables:");
         pw.println();
 
-        bindingProviders.forEach(p -> p.getBinding().forEach((key, value) -> {
+        SortedMap<String, Object> allBindings = new TreeMap<>();
+        bindingProviders.forEach(p -> allBindings.putAll(p.getBinding()));
+
+        allBindings.forEach((key, value) -> {
             if (value != null) {
-                pw.println("    " + key + ": " + value.getClass().getName());
+                pw.println("    " + key + ": " + BindingProvider.purifyClassName(value.getClass().getName()));
             }
-        }));
+        });
 
         pw.println();
 
