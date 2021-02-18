@@ -49,6 +49,7 @@ dependencies {
     testImplementation "com.agorapulse:gru-http:$gruVersion"
 
     testImplementation 'io.micronaut:micronaut-function'
+    testImplementation 'io.micronaut:micronaut-validation'
 
     testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:2.13.3"
 }

@@ -27,6 +27,22 @@ public interface BindingProvider {
     /**
      * @return the additional bindings for the script
      */
-    Map<String, Object> getBinding();
+    Map<String, ?> getBinding();
+
+    static String purifyClassName(String className) {
+        if (!className.contains("$")) {
+            return className;
+        }
+
+        if (className.contains(".$") && className.contains("Definition$Intercepted")) {
+            return className.replace("Definition$Intercepted", "")
+                .replace(".$", ".");
+        }
+
+        return className
+            .replace("$Intercepted", "")
+            .replace(".$", ".")
+            .replace('$', '.');
+    }
 
 }

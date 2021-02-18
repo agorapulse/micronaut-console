@@ -24,6 +24,8 @@ import javax.inject.Singleton;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 @Singleton
 public class DsldGenerator implements DslGenerator {
@@ -39,14 +41,17 @@ public class DsldGenerator implements DslGenerator {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
+        SortedMap<String, Object> allBindings = new TreeMap<>();
+        bindingProviders.forEach(p -> allBindings.putAll(p.getBinding()));
+
         pw.println("enclosingScript().accept {");
         pw.println();
         pw.println("    provider = 'Micronaut Console'");
-        bindingProviders.forEach(p -> p.getBinding().forEach((key, value) -> {
+        allBindings.forEach((key, value) -> {
                 if (value != null) {
-                    pw.println("    property(name: '" + key + "', type: '" + value.getClass().getName() + "')");
+                    pw.println("    property(name: '" + key + "', type: '" + BindingProvider.purifyClassName(value.getClass().getName()) + "')");
                 }
-            }));
+            });
         pw.println("}");
 
         return sw.toString();

@@ -20,10 +20,7 @@ package com.agorapulse.micronaut.console;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Singleton
 public class DefaultConsoleService implements ConsoleService {
@@ -67,7 +64,7 @@ public class DefaultConsoleService implements ConsoleService {
                 + ". Set 'io.micronaut.context.condition' logging to trace debug missing engines");
         }
 
-        Map<String, Object> bindings = new LinkedHashMap<>();
+        Map<String, Object> bindings = new TreeMap<>();
 
         bindingProviders.forEach(p -> bindings.putAll(p.getBinding()));
 

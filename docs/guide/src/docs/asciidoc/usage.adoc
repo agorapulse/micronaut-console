@@ -235,9 +235,28 @@ You can add more customization such as role based access by implementing your ow
 
 Here is how the builtin advisors look like:
 
+.Address Advisor
 [source,java]
 ----
-include::{root-dir}/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/DefaultSecurityAdvisorFactory.java[lines=20..-1]
+include::{root-dir}/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/advisors/AddressAdvisor.java[lines=20..-1]
+----
+
+.Cloud Advisor
+[source,java]
+----
+include::{root-dir}/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/advisors/CloudAdvisor.java[lines=20..-1]
+----
+
+.Until Advisor
+[source,java]
+----
+include::{root-dir}/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/advisors/UntilAdvisor.java[lines=20..-1]
+----
+
+.Users Advisor
+[source,java]
+----
+include::{root-dir}/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/advisors/UsersAdvisor.java[lines=20..-1]
 ----
 
 If any of the security advisors denies the execution then the script is not executed.
