@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Console</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.0.4</span>
+<span id="revnumber">version 1.0.5</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -151,7 +151,7 @@ for Groovy and for any JSR223 compatible scripting engine such as built-in Ecmas
 }
 
 dependencies {
-    implementation 'com.agorapulse:micronaut-console:1.0.4'
+    implementation 'com.agorapulse:micronaut-console:1.0.5'
 
     // for Groovy integration
     implementation 'org.codehaus.groovy:groovy'
@@ -740,6 +740,7 @@ import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.Environment;
 
 import javax.inject.Singleton;
+import java.time.Instant;
 
 @Singleton
 public class CloudAdvisor implements SecurityAdvisor {
@@ -754,7 +755,7 @@ public class CloudAdvisor implements SecurityAdvisor {
 
     @Override
     public boolean isExecutionAllowed(Script script) {
-        if (configuration.isEnabled()) {
+        if (configuration.isEnabled() || (configuration.convertUntil() != null &amp;&amp; configuration.convertUntil().isAfter(Instant.now()))) {
             return true;
         }
 
@@ -874,8 +875,8 @@ public class UsersAdvisor implements SecurityAdvisor {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.4<br>
-Last updated 2021-02-18 10:04:20 UTC
+Version 1.0.5<br>
+Last updated 2021-04-28 11:23:04 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
