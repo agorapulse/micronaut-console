@@ -24,6 +24,7 @@ import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.Environment;
 
 import javax.inject.Singleton;
+import java.time.Instant;
 
 @Singleton
 public class CloudAdvisor implements SecurityAdvisor {
@@ -38,7 +39,7 @@ public class CloudAdvisor implements SecurityAdvisor {
 
     @Override
     public boolean isExecutionAllowed(Script script) {
-        if (configuration.isEnabled()) {
+        if (configuration.isEnabled() || (configuration.convertUntil() != null && configuration.convertUntil().isAfter(Instant.now()))) {
             return true;
         }
 
