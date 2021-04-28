@@ -23,7 +23,11 @@ plugins {
     id "application"
 }
 
-
+config {
+    publishing {
+        enabled = false
+    }
+}
 
 version "0.1"
 group "micronaut.console.example.kotlin"

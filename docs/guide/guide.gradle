@@ -21,6 +21,9 @@ plugins {
 }
 
 config {
+    publishing {
+        enabled = false
+    }
     docs {
         guide {
             publish {

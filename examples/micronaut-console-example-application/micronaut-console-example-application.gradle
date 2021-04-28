@@ -22,6 +22,12 @@ plugins {
     id "groovy"
 }
 
+config {
+    publishing {
+        enabled = false
+    }
+}
+
 repositories {
     mavenCentral()
     maven { url "https://jcenter.bintray.com" }
