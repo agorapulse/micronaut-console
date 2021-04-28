@@ -68,7 +68,7 @@ class MicronautSecurityIntegrationSpec extends Specification {
         expect:
             gru.test {
                 post '/console/execute/result', {
-                    headers Authorization: "Bearer $token"
+                    headers Authorization: "Bearer $token".toString()
                     content inline('"Hello World"'), 'text/groovy'
                 }
                 expect {
