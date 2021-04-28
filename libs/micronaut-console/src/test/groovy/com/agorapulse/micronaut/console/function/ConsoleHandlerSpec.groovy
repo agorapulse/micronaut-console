@@ -18,7 +18,6 @@
 package com.agorapulse.micronaut.console.function
 
 import com.agorapulse.testing.fixt.Fixt
-import org.junit.Rule
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -27,7 +26,7 @@ class ConsoleHandlerSpec extends Specification {
 
     @Shared @AutoCleanup ConsoleHandler handler = new ConsoleHandler()
 
-    @Rule Fixt fixt = Fixt.create(ConsoleHandlerSpec)
+    Fixt fixt = Fixt.create(ConsoleHandlerSpec)
 
     void 'execute simple groovy script'() {
         expect:

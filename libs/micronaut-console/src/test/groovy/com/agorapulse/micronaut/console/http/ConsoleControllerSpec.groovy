@@ -21,7 +21,6 @@ import com.agorapulse.gru.Gru
 import com.agorapulse.gru.http.Http
 import io.micronaut.context.ApplicationContext
 import io.micronaut.runtime.server.EmbeddedServer
-import org.junit.Rule
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -33,7 +32,7 @@ class ConsoleControllerSpec extends Specification {
     @Shared @AutoCleanup ApplicationContext context
     @Shared @AutoCleanup EmbeddedServer server
 
-    @Rule Gru gru = Gru.equip(Http.steal(this))
+    @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
 
     void setupSpec() {
         context = ApplicationContext.build(

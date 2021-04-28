@@ -23,7 +23,6 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.security.authentication.UserDetails
 import io.micronaut.security.token.jwt.generator.AccessRefreshTokenGenerator
-import org.junit.Rule
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -34,7 +33,7 @@ class MicronautSecurityIntegrationSpec extends Specification {
     @Shared @AutoCleanup EmbeddedServer server
     @Shared AccessRefreshTokenGenerator generator
 
-    @Rule Gru gru = Gru.equip(Http.steal(this))
+    @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
 
     void setupSpec() {
         context = ApplicationContext.build().build()
@@ -69,7 +68,7 @@ class MicronautSecurityIntegrationSpec extends Specification {
         expect:
             gru.test {
                 post '/console/execute/result', {
-                    headers Authorization: "Bearer $token"
+                    headers Authorization: "Bearer $token".toString()
                     content inline('"Hello World"'), 'text/groovy'
                 }
                 expect {

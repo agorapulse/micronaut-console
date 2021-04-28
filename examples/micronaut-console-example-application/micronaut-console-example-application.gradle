@@ -57,7 +57,7 @@ dependencies {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
 
-    testImplementation "com.agorapulse:gru-http:$gruVersion"
+    testImplementation "com.agorapulse:gru-micronaut:$gruVersion"
 }
 
 test.classpath += configurations.developmentOnly
