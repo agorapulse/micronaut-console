@@ -29,12 +29,25 @@ You can use Micronaut Console to create sandbox function to execute arbitrary co
 
 Add the following lines to your either existing or a brand new Micronaut function:
 
-[source, groovy]
+[source, groovy, role="primary"]
+.Basic
 ----
+include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=import-runtime]
 include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=import]
 
 include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=tasks]
 ----
+
+[source, groovy, role="secondary"]
+.Authorized
+----
+include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=import-runtime]
+include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=import-sts]
+include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=import]
+
+include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=auth]
+----
+
 
 Then you can invoke the function from the command line as follows (assuming you have set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_KEY` environment variables)
 
