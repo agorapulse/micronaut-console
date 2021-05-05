@@ -130,6 +130,8 @@ allprojects {
         exclude '***.js'
         exclude '**/ConsoleHandlerSpec/*.groovy'
         exclude '**/ConsoleHandlerSpec/*.txt'
+        exclude '**/AuthConsoleHandlerSpec/*.groovy'
+        exclude '**/AuthConsoleHandlerSpec/*.txt'
         exclude '**/ConsoleControllerSpec/*.groovy'
         exclude '**/ConsoleControllerSpec/*.txt'
         exclude 'external.groovy'
