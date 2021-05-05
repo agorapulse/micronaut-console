@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Console</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.0.5</span>
+<span id="revnumber">version 1.0.6</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -151,7 +151,7 @@ for Groovy and for any JSR223 compatible scripting engine such as built-in Ecmas
 }
 
 dependencies {
-    implementation 'com.agorapulse:micronaut-console:1.0.5'
+    implementation 'com.agorapulse:micronaut-console:1.0.6'
 
     // for Groovy integration
     implementation 'org.codehaus.groovy:groovy'
@@ -212,7 +212,8 @@ You can create additional beans of the type <code>com.agorapulse.micronaut.conso
 <div class="paragraph">
 <p>Add the following lines to your either existing or a brand new Micronaut function:</p>
 </div>
-<div class="listingblock">
+<div class="listingblock primary">
+<div class="title">Basic</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="groovy">import com.amazonaws.services.lambda.model.InvocationType
 import com.amazonaws.services.lambda.model.Runtime
@@ -237,6 +238,61 @@ task invokeSandbox(type: AWSLambdaInvokeTask) {
     functionName = 'MicronautConsoleSandbox'
     invocationType = InvocationType.RequestResponse
     payload = JsonOutput.toJson(scriptFile.text)
+
+    doLast {
+        println "\nLambda function result:\n"
+        println new JsonSlurper().parseText(new String(invokeResult.payload.array(), "UTF-8"))
+        println()
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Authorized</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="groovy">import com.amazonaws.services.lambda.model.InvocationType
+import com.amazonaws.services.lambda.model.Runtime
+import com.amazonaws.services.securitytoken.AWSSecurityTokenService
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClient
+import com.amazonaws.services.securitytoken.model.GetCallerIdentityRequest
+import com.amazonaws.services.securitytoken.model.GetCallerIdentityResult
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import jp.classmethod.aws.gradle.lambda.AWSLambdaInvokeTask
+import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
+
+task deploySandbox(type: AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
+    functionName = "MicronautConsoleSandbox"
+    handler = "com.agorapulse.micronaut.console.function.AuthConsoleHandler::apply"
+    role = "arn:aws:iam::${aws.accountId}:role/lambda_basic_execution"
+    runtime = Runtime.Java8
+    zipFile = shadowJar.archivePath
+    memorySize = 512
+    timeout = 60
+}
+
+task invokeSandbox(type: AWSLambdaInvokeTask) {
+    File scriptFile = file(project.hasProperty('script.file') ? project.getProperty('script.file') : 'src/test/resources/scripts/hello.sandbox.groovy')
+
+    Map&lt;String, String&gt; user = [:]
+    try {
+        AWSSecurityTokenService sts = aws.createClient(AWSSecurityTokenServiceClient.class, aws.profileName);
+        sts.region = aws.getActiveRegion(aws.region)
+        GetCallerIdentityResult identity = sts.getCallerIdentity(new GetCallerIdentityRequest())
+        user.id = identity.arn
+        user.name = identity.userId
+        user.address = '/' + new URL('http://checkip.amazonaws.com/').text
+    } catch (Exception ignored) {
+        logger.info("AWS not configured")
+    }
+
+
+    functionName = 'MicronautConsoleSandbox'
+    invocationType = InvocationType.RequestResponse
+    payload = JsonOutput.toJson(
+        body: scriptFile.text,
+        user: user
+    )
 
     doLast {
         println "\nLambda function result:\n"
@@ -875,8 +931,8 @@ public class UsersAdvisor implements SecurityAdvisor {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.5<br>
-Last updated 2021-04-28 11:42:25 UTC
+Version 1.0.6<br>
+Last updated 2021-05-05 09:46:22 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
