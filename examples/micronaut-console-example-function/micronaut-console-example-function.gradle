@@ -15,9 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// tag::import[]
+// tag::import-runtime[]
 import com.amazonaws.services.lambda.model.InvocationType
 import com.amazonaws.services.lambda.model.Runtime
+// end::import-runtime[]
+// tag::import-sts[]
+import com.amazonaws.services.securitytoken.AWSSecurityTokenService
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClient
+import com.amazonaws.services.securitytoken.model.GetCallerIdentityRequest
+import com.amazonaws.services.securitytoken.model.GetCallerIdentityResult
+// end::import-sts[]
+// tag::import[]
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import jp.classmethod.aws.gradle.lambda.AWSLambdaInvokeTask
@@ -123,6 +131,7 @@ jar {
 }
 
 
+/*
 // tag::tasks[]
 task deploySandbox(type: AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
     functionName = "MicronautConsoleSandbox"
@@ -148,3 +157,47 @@ task invokeSandbox(type: AWSLambdaInvokeTask) {
     }
 }
 // end::tasks[]
+*/
+
+// tag::auth[]
+task deploySandbox(type: AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
+    functionName = "MicronautConsoleSandbox"
+    handler = "com.agorapulse.micronaut.console.function.AuthConsoleHandler::apply"
+    role = "arn:aws:iam::${aws.accountId}:role/lambda_basic_execution"
+    runtime = Runtime.Java8
+    zipFile = shadowJar.archivePath
+    memorySize = 512
+    timeout = 60
+}
+
+task invokeSandbox(type: AWSLambdaInvokeTask) {
+    File scriptFile = file(project.hasProperty('script.file') ? project.getProperty('script.file') : 'src/test/resources/scripts/hello.sandbox.groovy')
+
+    Map<String, String> user = [:]
+    try {
+        AWSSecurityTokenService sts = aws.createClient(AWSSecurityTokenServiceClient.class, aws.profileName);
+        sts.region = aws.getActiveRegion(aws.region)
+        GetCallerIdentityResult identity = sts.getCallerIdentity(new GetCallerIdentityRequest())
+        user.id = identity.arn
+        user.name = identity.userId
+        user.address = '/' + new URL('http://checkip.amazonaws.com/').text
+    } catch (Exception ignored) {
+        logger.info("AWS not configured")
+    }
+
+
+    functionName = 'MicronautConsoleSandbox'
+    invocationType = InvocationType.RequestResponse
+    payload = JsonOutput.toJson(
+        body: scriptFile.text,
+        user: user
+    )
+
+    doLast {
+        println "\nLambda function result:\n"
+        println new JsonSlurper().parseText(new String(invokeResult.payload.array(), "UTF-8"))
+        println()
+    }
+}
+// end::auth[]
+
