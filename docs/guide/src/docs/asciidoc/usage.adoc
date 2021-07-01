@@ -278,3 +278,28 @@ If any of the security advisors denies the execution then the script is not exec
 
 Groovy programming language is the first-class citizen in Micronaut Console. You can customize the way how the Groovy script by implementing bean of type
 `com.agorapulse.micronaut.console.groovy.CompilerConfigurationCustomizer`.
+
+=== Server-side Request Forgery Protection
+
+You may want to open your console for access only from the localhost and connect via SSH tunnel to execute the scripts. In this case, you need
+to be aware of Server-side Request Forgery (SSRF). If your application
+issues HTTP requests for user-defined URLs then you should protect
+your console with additional required header which will be only present in
+authorized calls but won't be present in any accidental ones.
+
+[source,yaml]
+----
+console:
+  # enable the console
+  enabled: true
+  # but only for localhost
+  addresses:
+    - /127.0.0.1
+    - /0:0:0:0:0:0:0:1
+  # the name of the header which needs to be present in the POST requests
+  header-name: X-Console-Verify
+  # the optional value of the header, any value will match if not configured
+  header-value: S3cr3T
+----
+
+If you configure the required header then every `POST` request must also pass the header `X-Console-Verify: S3cr3t` otherwise `403: FORBIDDEN` response will be returned from the console's endpoints.

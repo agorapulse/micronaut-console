@@ -39,7 +39,7 @@ public class CloudAdvisor implements SecurityAdvisor {
 
     @Override
     public boolean isExecutionAllowed(Script script) {
-        if (configuration.isEnabled() || (configuration.convertUntil() != null && configuration.convertUntil().isAfter(Instant.now()))) {
+        if (configuration.isEnabled() || configuration.convertUntil() != null && configuration.convertUntil().isAfter(Instant.now())) {
             return true;
         }
 

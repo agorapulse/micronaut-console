@@ -33,6 +33,8 @@ public class ConsoleConfiguration {
     private List<String> addresses = new ArrayList<>();
     private List<String> users = new ArrayList<>();
     private Object until;
+    private String headerName;
+    private String headerValue;
 
     /**
      * @return true if the console should be enabled in the <code>cloud</code> environment
@@ -117,5 +119,33 @@ public class ConsoleConfiguration {
         return ConversionService.SHARED.convert(until, Instant.class).orElseThrow(() ->
             new IllegalArgumentException("Cannot convert " + until + " (" + until.getClass() + ") to Instant")
         );
+    }
+
+    /**
+     * @return the name of the header which must be present for any POST calls
+     */
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    /**
+     * @param headerName the name of the header which must be present for any POST calls
+     */
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
+
+    /**
+     * @return the required value of the header if header check is configured, only presence of the header is checked if <code>null</code>
+     */
+    public String getHeaderValue() {
+        return headerValue;
+    }
+
+    /**
+     * @param headerValue the required value of the header if header check is configured, only presence of the header is checked if <code>null</code>
+     */
+    public void setHeaderValue(String headerValue) {
+        this.headerValue = headerValue;
     }
 }
