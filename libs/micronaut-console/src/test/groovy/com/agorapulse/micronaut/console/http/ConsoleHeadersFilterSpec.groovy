@@ -42,7 +42,7 @@ class ConsoleHeadersFilterSpec extends Specification {
             }
     }
 
-    void 'header present'() {
+    void 'header present but the header value not set in the configuration'() {
         given:
             gru = Gru.create(Micronaut.build(this) {
                 properties('console.header-name': 'X-Console-Verification')
@@ -52,6 +52,9 @@ class ConsoleHeadersFilterSpec extends Specification {
                 post('/console/execute') {
                     headers 'X-Console-Verification': 'Hello'
                     content inline('"Hello world!"'), 'text/groovy'
+                }
+                expect {
+                    status FORBIDDEN
                 }
             }
     }

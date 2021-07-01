@@ -298,7 +298,7 @@ console:
     - /0:0:0:0:0:0:0:1
   # the name of the header which needs to be present in the POST requests
   header-name: X-Console-Verify
-  # the optional value of the header, any value will match if not configured
+  # the expected value of the header
   header-value: S3cr3T
 ----
 

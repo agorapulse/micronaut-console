@@ -28,15 +28,23 @@ import io.micronaut.http.filter.FilterChain;
 import io.micronaut.http.filter.HttpFilter;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Filter("${console.path:/console}/**")
 @Requires(property = "console.header-name")
 public class ConsoleHeadersFilter implements HttpFilter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleHeadersFilter.class);
+
     private final ConsoleConfiguration configuration;
 
     public ConsoleHeadersFilter(ConsoleConfiguration configuration) {
         this.configuration = configuration;
+
+        if (configuration.getHeaderValue() == null) {
+            LOGGER.error("Missing 'console.header-value' configuration value. All header checks will fail!");
+        }
     }
 
     @Override
@@ -49,7 +57,7 @@ public class ConsoleHeadersFilter implements HttpFilter {
                         return Flowable.just(HttpResponse.status(HttpStatus.FORBIDDEN, "Missing verification header"));
                     }
 
-                    if (configuration.getHeaderValue() != null && !configuration.getHeaderValue().equals(headerValue)) {
+                    if (!headerValue.equals(configuration.getHeaderValue())) {
                         return Flowable.just(HttpResponse.status(HttpStatus.FORBIDDEN, "Wrong value of the verification header"));
                     }
                 }
