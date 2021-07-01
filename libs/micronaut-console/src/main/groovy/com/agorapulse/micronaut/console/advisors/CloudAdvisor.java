@@ -39,9 +39,11 @@ public class CloudAdvisor implements SecurityAdvisor {
 
     @Override
     public boolean isExecutionAllowed(Script script) {
+        //CHECKSTYLE:OFF
         if (configuration.isEnabled() || (configuration.convertUntil() != null && configuration.convertUntil().isAfter(Instant.now()))) {
             return true;
         }
+        //CHECKSTYLE:ON
 
         // functions has their own security checks
         if (context.getEnvironment().getActiveNames().contains(Environment.FUNCTION)) {
