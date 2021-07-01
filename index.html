@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Console</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.0.6</span>
+<span id="revnumber">version 1.0.7</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -117,6 +117,7 @@ $(addBlockSwitches);
 <li><a href="#_auditing">3.4.4. Auditing</a></li>
 <li><a href="#_security_advisors">3.4.5. Security Advisors</a></li>
 <li><a href="#_compilation_customizers">3.4.6. Compilation Customizers</a></li>
+<li><a href="#_server_side_request_forgery_protection">3.4.7. Server-side Request Forgery Protection</a></li>
 </ul>
 </li>
 </ul>
@@ -151,7 +152,7 @@ for Groovy and for any JSR223 compatible scripting engine such as built-in Ecmas
 }
 
 dependencies {
-    implementation 'com.agorapulse:micronaut-console:1.0.6'
+    implementation 'com.agorapulse:micronaut-console:1.0.7'
 
     // for Groovy integration
     implementation 'org.codehaus.groovy:groovy'
@@ -811,9 +812,11 @@ public class CloudAdvisor implements SecurityAdvisor {
 
     @Override
     public boolean isExecutionAllowed(Script script) {
+        //CHECKSTYLE:OFF
         if (configuration.isEnabled() || (configuration.convertUntil() != null &amp;&amp; configuration.convertUntil().isAfter(Instant.now()))) {
             return true;
         }
+        //CHECKSTYLE:ON
 
         // functions has their own security checks
         if (context.getEnvironment().getActiveNames().contains(Environment.FUNCTION)) {
@@ -914,6 +917,34 @@ public class UsersAdvisor implements SecurityAdvisor {
 <code>com.agorapulse.micronaut.console.groovy.CompilerConfigurationCustomizer</code>.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_server_side_request_forgery_protection"><a class="anchor" href="#_server_side_request_forgery_protection"></a>3.4.7. Server-side Request Forgery Protection</h4>
+<div class="paragraph">
+<p>You may want to open your console for access only from the localhost and connect via SSH tunnel to execute the scripts. In this case, you need
+to be aware of Server-side Request Forgery (SSRF). If your application
+issues HTTP requests for user-defined URLs then you should protect
+your console with additional required header which will be only present in
+authorized calls but won&#8217;t be present in any accidental ones.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">console:
+  # enable the console
+  enabled: true
+  # but only for localhost
+  addresses:
+    - /127.0.0.1
+    - /0:0:0:0:0:0:0:1
+  # the name of the header which needs to be present in the POST requests
+  header-name: X-Console-Verify
+  # the expected value of the header
+  header-value: S3cr3T</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you configure the required header then every <code>POST</code> request must also pass the header <code>X-Console-Verify: S3cr3t</code> otherwise <code>403: FORBIDDEN</code> response will be returned from the console&#8217;s endpoints.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -931,8 +962,8 @@ public class UsersAdvisor implements SecurityAdvisor {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.6<br>
-Last updated 2021-05-05 09:46:22 UTC
+Version 1.0.7<br>
+Last updated 2021-07-01 10:03:37 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
