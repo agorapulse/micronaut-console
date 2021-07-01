@@ -49,7 +49,7 @@ public class ConsoleHeadersFilter implements HttpFilter {
                         return Flowable.just(HttpResponse.status(HttpStatus.FORBIDDEN, "Missing verification header"));
                     }
 
-                    if (configuration.getHeaderValue() != null &&!configuration.getHeaderValue().equals(headerValue)) {
+                    if (configuration.getHeaderValue() != null && !configuration.getHeaderValue().equals(headerValue)) {
                         return Flowable.just(HttpResponse.status(HttpStatus.FORBIDDEN, "Wrong value of the verification header"));
                     }
                 }
