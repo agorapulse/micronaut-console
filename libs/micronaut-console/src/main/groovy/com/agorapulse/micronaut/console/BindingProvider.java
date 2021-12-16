@@ -36,7 +36,11 @@ public interface BindingProvider {
         }
 
         if (className.contains(".$") && className.contains("Definition$Intercepted")) {
-            return className.replace("Definition$Intercepted", "")
+            return className
+                // Micronaut 3.x
+                .replace("$Definition$Intercepted", "")
+                // Micronaut 1.x and 2.x
+                .replace("Definition$Intercepted", "")
                 .replace(".$", ".");
         }
 

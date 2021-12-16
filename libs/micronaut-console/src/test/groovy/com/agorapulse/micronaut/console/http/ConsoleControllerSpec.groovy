@@ -32,10 +32,10 @@ class ConsoleControllerSpec extends Specification {
     @Shared @AutoCleanup ApplicationContext context
     @Shared @AutoCleanup EmbeddedServer server
 
-    @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
+    @AutoCleanup Gru gru = Gru.create(Http.create(this))
 
     void setupSpec() {
-        context = ApplicationContext.build(
+        context = ApplicationContext.builder(
             'console.addresses': '/127.0.0.1',
             'console.users': USER
         ).build()

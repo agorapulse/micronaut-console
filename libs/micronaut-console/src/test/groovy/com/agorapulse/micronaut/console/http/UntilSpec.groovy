@@ -35,7 +35,7 @@ class UntilSpec extends Specification {
     @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
 
     void setupSpec() {
-        context = ApplicationContext.build(
+        context = ApplicationContext.builder(
             'console.until': Instant.now().minusSeconds(3600).toString(),
         ).build()
 

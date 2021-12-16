@@ -21,8 +21,8 @@ import com.agorapulse.gru.Gru
 import com.agorapulse.gru.http.Http
 import io.micronaut.context.ApplicationContext
 import io.micronaut.runtime.server.EmbeddedServer
-import io.micronaut.security.authentication.UserDetails
-import io.micronaut.security.token.jwt.generator.AccessRefreshTokenGenerator
+import io.micronaut.security.token.generator.TokenGenerator
+import io.micronaut.security.token.jwt.generator.claims.ClaimsGenerator
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -31,16 +31,18 @@ class MicronautSecurityIntegrationSpec extends Specification {
 
     @Shared @AutoCleanup ApplicationContext context
     @Shared @AutoCleanup EmbeddedServer server
-    @Shared AccessRefreshTokenGenerator generator
+    @Shared TokenGenerator tokenGenerator
+    @Shared ClaimsGenerator claimsGenerator
 
-    @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
+    @AutoCleanup Gru gru = Gru.create(Http.create(this))
 
     void setupSpec() {
-        context = ApplicationContext.build().build()
+        context = ApplicationContext.builder().build()
 
         context.start()
 
-        generator = context.getBean(AccessRefreshTokenGenerator)
+        claimsGenerator = context.getBean(ClaimsGenerator)
+        tokenGenerator = context.getBean(TokenGenerator)
 
         server = context.getBean(EmbeddedServer)
         server.start()
@@ -64,7 +66,7 @@ class MicronautSecurityIntegrationSpec extends Specification {
 
     void 'can access the console with the token'() {
         given:
-            String token = generator.generate(new UserDetails('sherlock', [])).get().accessToken
+            String token = tokenGenerator.generateToken(claimsGenerator.generateClaimsSet([sub: 'sherlock'], 3600)).get()
         expect:
             gru.test {
                 post '/console/execute/result', {
