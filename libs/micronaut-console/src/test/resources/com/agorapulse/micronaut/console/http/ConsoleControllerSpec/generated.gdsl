@@ -3,5 +3,7 @@ def ctx = context(scriptScope())
 contribute(ctx) {
     property(name: 'child', type: 'com.agorapulse.micronaut.console.http.ParentClass.ChildService')
     property(name: 'ctx', type: 'io.micronaut.context.DefaultApplicationContext')
+    property(name: 'request', type: 'io.micronaut.http.server.netty.NettyHttpRequest')
     property(name: 'service', type: 'com.agorapulse.micronaut.console.http.DefaultInterceptedInterface')
+    property(name: 'user', type: 'com.agorapulse.micronaut.console.User')
 }
