@@ -23,7 +23,6 @@ import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
-import io.micronaut.security.authentication.UserDetails;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
@@ -38,7 +37,7 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
     public Publisher<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) {
         return Flowable.create(emitter -> {
             if (authenticationRequest.getIdentity().equals("sherlock") && authenticationRequest.getSecret().equals("password")) {
-                emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList<>()));
+                emitter.onNext(new SimpleAuthenticationResponse(new SimpleAuthentication(authenticationRequest.getIdentity().toString())));
                 emitter.onComplete();
             } else {
                 emitter.onError(new AuthenticationException(new AuthenticationFailed()));
@@ -48,13 +47,6 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
 
     // @Override changed in Micronaut 2.x
     public Publisher<AuthenticationResponse> authenticate(HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authenticationRequest) {
-        return Flowable.create(emitter -> {
-            if (authenticationRequest.getIdentity().equals("sherlock") && authenticationRequest.getSecret().equals("password")) {
-                emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList<>()));
-                emitter.onComplete();
-            } else {
-                emitter.onError(new AuthenticationException(new AuthenticationFailed()));
-            }
-        }, BackpressureStrategy.ERROR);
+        return authenticate(authenticationRequest);
     }
 }
