@@ -28,7 +28,6 @@ import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
 import javax.inject.Singleton;
-import java.util.ArrayList;
 
 @Singleton
 public class AuthenticationProviderUserPassword implements AuthenticationProvider {
