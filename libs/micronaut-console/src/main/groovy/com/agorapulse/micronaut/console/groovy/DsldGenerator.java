@@ -41,7 +41,7 @@ public class DsldGenerator implements DslGenerator {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
-        SortedMap<String, Object> allBindings = new TreeMap<>();
+        SortedMap<String, Object> allBindings = new TreeMap<>(BindingProvider.getDefaultBindingsStubs());
         bindingProviders.forEach(p -> allBindings.putAll(p.getBinding()));
 
         pw.println("enclosingScript().accept {");

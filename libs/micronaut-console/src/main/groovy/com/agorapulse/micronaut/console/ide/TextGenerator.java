@@ -43,7 +43,7 @@ public class TextGenerator implements DslGenerator {
         pw.println("Available Variables:");
         pw.println();
 
-        SortedMap<String, Object> allBindings = new TreeMap<>();
+        SortedMap<String, Object> allBindings = new TreeMap<>(BindingProvider.getDefaultBindingsStubs());
         bindingProviders.forEach(p -> allBindings.putAll(p.getBinding()));
 
         allBindings.forEach((key, value) -> {

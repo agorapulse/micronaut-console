@@ -2,5 +2,6 @@ Available Variables:
 
     child: com.agorapulse.micronaut.console.http.ParentClass.ChildService
     ctx: io.micronaut.context.DefaultApplicationContext
+    request: io.micronaut.http.server.netty.NettyHttpRequest
     service: com.agorapulse.micronaut.console.http.DefaultInterceptedInterface
-
+    user: com.agorapulse.micronaut.console.User

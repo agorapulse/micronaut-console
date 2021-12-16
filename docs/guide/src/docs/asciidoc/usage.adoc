@@ -3,7 +3,25 @@
 = Usage
 
 == Script Variables
-By default, there is a single variable `ctx` of the type `io.micronaut.context.ApplicationContext` available in the script.
+The following variables are available by default:
+
+|===
+|Name |Type |Description
+
+|`ctx`
+|`io.micronaut.context.ApplicationContext`
+|The application context
+
+|`user`
+|`com.agorapulse.micronaut.console.User`
+|The user executing the script
+
+|`request`
+|`io.micronaut.http.HttpRequest`
+|The request used to execute the script (only for HTTP calls)
+
+|===
+
 You can create additional beans of the type `com.agorapulse.micronaut.console.BindingProvider` to provide additional binding variables.
 
 You can see what are bindings are available in your application issuing `GET` request to `/console/dsl/text` endpoint:

@@ -17,6 +17,7 @@
  */
 package com.agorapulse.micronaut.console;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -43,6 +44,10 @@ public interface BindingProvider {
             .replace("$Intercepted", "")
             .replace(".$", ".")
             .replace('$', '.');
+    }
+
+    static Map<String, ?> getDefaultBindingsStubs() {
+        return Collections.singletonMap("user", User.anonymous());
     }
 
 }
