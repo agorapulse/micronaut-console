@@ -20,6 +20,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "5.0.0"
     id "application"
     id "groovy"
+    id "micronaut-compatibility"
 }
 
 config {
@@ -39,11 +40,11 @@ configurations {
 }
 
 dependencies {
-    annotationProcessor "io.micronaut:micronaut-security"
+    annotationProcessor micronautMigratedDependency("micronaut-security")
     implementation project(':micronaut-console')
     implementation 'org.codehaus.groovy:groovy'
-    implementation "io.micronaut:micronaut-security"
-    implementation "io.micronaut:micronaut-security-jwt"
+    implementation micronautMigratedDependency("micronaut-security")
+    implementation micronautMigratedDependency("micronaut-security-jwt")
 
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     annotationProcessor "io.micronaut:micronaut-inject-java"
