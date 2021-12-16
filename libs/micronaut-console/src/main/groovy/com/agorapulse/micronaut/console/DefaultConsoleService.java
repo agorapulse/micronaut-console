@@ -65,6 +65,7 @@ public class DefaultConsoleService implements ConsoleService {
         }
 
         Map<String, Object> bindings = new TreeMap<>();
+        bindings.put("user", script.getBody());
 
         bindingProviders.forEach(p -> bindings.putAll(p.getBinding()));
 
