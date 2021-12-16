@@ -26,7 +26,7 @@ public class SimpleAuthentication implements Authentication {
         return Collections.emptyMap();
     }
 
-    @Override
+    // @Override Micronaut 3 compatibility
     public Collection<String> getRoles() {
         return Collections.emptySet();
     }

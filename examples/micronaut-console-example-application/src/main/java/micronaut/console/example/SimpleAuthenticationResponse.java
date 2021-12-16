@@ -13,7 +13,7 @@ public class SimpleAuthenticationResponse implements AuthenticationResponse {
         this.authentication = authentication;
     }
 
-    @Override
+    // @Override Micronaut 3 compatibility
     public Optional<Authentication> getAuthentication() {
         return Optional.of(authentication);
     }
