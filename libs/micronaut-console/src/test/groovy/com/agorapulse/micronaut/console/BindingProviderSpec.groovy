@@ -28,16 +28,18 @@ class BindingProviderSpec extends Specification {
             BindingProvider.purifyClassName(type) == purified
 
         where:
-            type                                        | purified
+            type                                                    | purified
             // normal class or interface
-            'com.example.Foo'                           | 'com.example.Foo'
+            'com.example.Foo'                                       | 'com.example.Foo'
             // clients, repositories, etc.
-            'com.example.Foo$Intercepted'               | 'com.example.Foo'
+            'com.example.Foo$Intercepted'                           | 'com.example.Foo'
+            'com.example.$Foo$Definition$Intercepted'               | 'com.example.Foo'
             // intercepted classes or interfaces e.g. Validable
-            'com.example.$FooDefinition$Intercepted'    | 'com.example.Foo'
-            'com.example.FooDefinition$Intercepted'     | 'com.example.FooDefinition'
+            'com.example.$FooDefinition$Intercepted'                | 'com.example.Foo'
+            'com.example.FooDefinition$Intercepted'                 | 'com.example.FooDefinition'
+            'com.example.$FooDefinition$Definition$Intercepted'     | 'com.example.FooDefinition'
             // nested classes
-            'com.example.Foo$Bar'                       | 'com.example.Foo.Bar'
+            'com.example.Foo$Bar'                                   | 'com.example.Foo.Bar'
     }
 
 }
