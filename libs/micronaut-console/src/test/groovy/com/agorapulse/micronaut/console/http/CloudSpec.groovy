@@ -34,7 +34,7 @@ class CloudSpec extends Specification {
     @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
 
     void setupSpec() {
-        context = ApplicationContext.build(Environment.CLOUD).build()
+        context = ApplicationContext.builder(Environment.CLOUD).build()
 
         context.start()
 

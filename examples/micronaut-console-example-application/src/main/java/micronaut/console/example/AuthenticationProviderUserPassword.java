@@ -17,6 +17,7 @@
  */
 package micronaut.console.example;
 
+import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationException;
 import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 @Singleton
 public class AuthenticationProviderUserPassword implements AuthenticationProvider {
 
-    @Override
+    // @Override changed in Micronaut 2.x
     public Publisher<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) {
         return Flowable.create(emitter -> {
             if (authenticationRequest.getIdentity().equals("sherlock") && authenticationRequest.getSecret().equals("password")) {
@@ -45,4 +46,15 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
         }, BackpressureStrategy.ERROR);
     }
 
+    // @Override changed in Micronaut 2.x
+    public Publisher<AuthenticationResponse> authenticate(HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authenticationRequest) {
+        return Flowable.create(emitter -> {
+            if (authenticationRequest.getIdentity().equals("sherlock") && authenticationRequest.getSecret().equals("password")) {
+                emitter.onNext(new UserDetails((String) authenticationRequest.getIdentity(), new ArrayList<>()));
+                emitter.onComplete();
+            } else {
+                emitter.onError(new AuthenticationException(new AuthenticationFailed()));
+            }
+        }, BackpressureStrategy.ERROR);
+    }
 }

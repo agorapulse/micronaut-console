@@ -33,10 +33,10 @@ class MicronautSecurityIntegrationSpec extends Specification {
     @Shared @AutoCleanup EmbeddedServer server
     @Shared AccessRefreshTokenGenerator generator
 
-    @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
+    @AutoCleanup Gru gru = Gru.create(Http.create(this))
 
     void setupSpec() {
-        context = ApplicationContext.build().build()
+        context = ApplicationContext.builder().build()
 
         context.start()
 

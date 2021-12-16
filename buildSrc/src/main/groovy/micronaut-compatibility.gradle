@@ -20,6 +20,7 @@ import groovy.transform.Field
 @Field static final Map<String, String> MICRONAUT_1 = [
     'micronaut-runtime-groovy': 'io.micronaut',
     'micronaut-function-groovy': 'io.micronaut',
+    'micronaut-function-aws': 'io.micronaut',
     'micronaut-aws-common': 'io.micronaut.configuration',
     'micronaut-security': 'io.micronaut',
     'micronaut-security-jwt': 'io.micronaut',
@@ -28,6 +29,7 @@ import groovy.transform.Field
 @Field static final Map<String, String> MICRONAUT_2 = [
     'micronaut-runtime-groovy': 'io.micronaut.groovy',
     'micronaut-function-groovy': 'io.micronaut.groovy',
+    'micronaut-function-aws': 'io.micronaut.aws',
     'micronaut-aws-common': 'io.micronaut.aws',
     'micronaut-security': 'io.micronaut.security',
     'micronaut-security-jwt': 'io.micronaut.security',
