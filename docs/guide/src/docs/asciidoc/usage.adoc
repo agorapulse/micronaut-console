@@ -161,6 +161,8 @@ include::{root-dir}/examples/micronaut-console-example-application/src/main/reso
 
 WARNING: The addresses must start with a forward slash `/`.
 
+WARNING: If you are using reverse proxy (e.g. Nginx on AWS Beanstalk) then you need to https://sergiodelamo.com/blog/host-and-ip-resolution-micronaut-load-balancer-elastic-beanstalk.html[set up the hostname resolution] correctly.
+
 === User Filter
 
 You can specify which users can access the console
