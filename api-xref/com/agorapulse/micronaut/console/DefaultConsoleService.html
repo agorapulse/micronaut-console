@@ -73,31 +73,32 @@
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          }
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          Map&lt;String, Object&gt; bindings = <strong class="jxr_keyword">new</strong> TreeMap&lt;&gt;();
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>  
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          bindingProviders.forEach(p -&gt; bindings.putAll(p.getBinding()));
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>  
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          auditServices.forEach(a -&gt; a.beforeExecute(script, bindings));
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>  
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>              <a name="ExecutionResult" href="../../../../com/agorapulse/micronaut/console/ExecutionResult.html#ExecutionResult">ExecutionResult</a> result = engine.execute(script.getBody(), bindings);
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>              auditServices.forEach(a -&gt; a.afterExecute(script, result));
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>              <strong class="jxr_keyword">return</strong> result;
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>          } <strong class="jxr_keyword">catch</strong> (Throwable throwable) {
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>              auditServices.forEach(a -&gt; a.onError(script, throwable));
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="ConsoleException" href="../../../../com/agorapulse/micronaut/console/ConsoleException.html#ConsoleException">ConsoleException</a>(script, <span class="jxr_string">"Exception during script execution"</span>, throwable);
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>          }
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>      }
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>  
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>      @Override @Nullable
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>      <strong class="jxr_keyword">public</strong> String getLanguageForMimeType(@Nullable String contentType) {
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">for</strong> (<a name="ConsoleEngine" href="../../../../com/agorapulse/micronaut/console/ConsoleEngine.html#ConsoleEngine">ConsoleEngine</a> engine : engines.values()) {
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>              <strong class="jxr_keyword">if</strong> (engine.getSupportedMimeTypes().contains(contentType)) {
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>                  <strong class="jxr_keyword">return</strong> engine.getLanguage();
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>              }
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>          }
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">return</strong> configuration.getLanguage();
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>      }
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>  }
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>          bindings.put(<span class="jxr_string">"user"</span>, script.getBody());
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          bindingProviders.forEach(p -&gt; bindings.putAll(p.getBinding()));
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          auditServices.forEach(a -&gt; a.beforeExecute(script, bindings));
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>              <a name="ExecutionResult" href="../../../../com/agorapulse/micronaut/console/ExecutionResult.html#ExecutionResult">ExecutionResult</a> result = engine.execute(script.getBody(), bindings);
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>              auditServices.forEach(a -&gt; a.afterExecute(script, result));
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>              <strong class="jxr_keyword">return</strong> result;
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          } <strong class="jxr_keyword">catch</strong> (Throwable throwable) {
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>              auditServices.forEach(a -&gt; a.onError(script, throwable));
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="ConsoleException" href="../../../../com/agorapulse/micronaut/console/ConsoleException.html#ConsoleException">ConsoleException</a>(script, <span class="jxr_string">"Exception during script execution"</span>, throwable);
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          }
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>      }
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>      @Override @Nullable
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">public</strong> String getLanguageForMimeType(@Nullable String contentType) {
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">for</strong> (<a name="ConsoleEngine" href="../../../../com/agorapulse/micronaut/console/ConsoleEngine.html#ConsoleEngine">ConsoleEngine</a> engine : engines.values()) {
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>              <strong class="jxr_keyword">if</strong> (engine.getSupportedMimeTypes().contains(contentType)) {
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>                  <strong class="jxr_keyword">return</strong> engine.getLanguage();
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>              }
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          }
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">return</strong> configuration.getLanguage();
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>      }
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  }
 </pre>
 <hr/>
 <div id="footer"></div>

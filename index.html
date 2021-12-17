@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Console</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.0.7</span>
+<span id="revnumber">version 1.1.0.1-micronaut-3.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -152,7 +152,7 @@ for Groovy and for any JSR223 compatible scripting engine such as built-in Ecmas
 }
 
 dependencies {
-    implementation 'com.agorapulse:micronaut-console:1.0.7'
+    implementation 'com.agorapulse:micronaut-console:1.1.0.1-micronaut-3.0'
 
     // for Groovy integration
     implementation 'org.codehaus.groovy:groovy'
@@ -167,6 +167,18 @@ dependencies {
 }</code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+There are variants for older Micronaut versions as well. You can use <code>micronaut-1.0</code> or <code>micronaut-2.0</code> suffix for different versions of Micronaut.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -175,8 +187,41 @@ dependencies {
 <div class="sect2">
 <h3 id="_script_variables"><a class="anchor" href="#_script_variables"></a>3.1. Script Variables</h3>
 <div class="paragraph">
-<p>By default, there is a single variable <code>ctx</code> of the type <code>io.micronaut.context.ApplicationContext</code> available in the script.
-You can create additional beans of the type <code>com.agorapulse.micronaut.console.BindingProvider</code> to provide additional binding variables.</p>
+<p>The following variables are available by default:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ctx</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.micronaut.context.ApplicationContext</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The application context</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>user</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.agorapulse.micronaut.console.User</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The user executing the script</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>request</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>io.micronaut.http.HttpRequest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The request used to execute the script (only for HTTP calls)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>You can create additional beans of the type <code>com.agorapulse.micronaut.console.BindingProvider</code> to provide additional binding variables.</p>
 </div>
 <div class="paragraph">
 <p>You can see what are bindings are available in your application issuing <code>GET</code> request to <code>/console/dsl/text</code> endpoint:</p>
@@ -465,6 +510,18 @@ to any ISO date in the future such as <code>2020-11-12T10:00:00Z</code>. The sec
 </td>
 <td class="content">
 The addresses must start with a forward slash <code>/</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+If you are using reverse proxy (e.g. Nginx on AWS Beanstalk) then you need to <a href="https://sergiodelamo.com/blog/host-and-ip-resolution-micronaut-load-balancer-elastic-beanstalk.html">set up the hostname resolution</a> correctly.
 </td>
 </tr>
 </table>
@@ -962,8 +1019,8 @@ authorized calls but won&#8217;t be present in any accidental ones.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.7<br>
-Last updated 2021-07-01 10:03:37 UTC
+Version 1.1.0.1-micronaut-3.0<br>
+Last updated 2021-12-17 11:33:25 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
