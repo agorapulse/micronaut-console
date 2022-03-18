@@ -16,22 +16,17 @@
  * limitations under the License.
  */
 // tag::import-runtime[]
-
 import com.amazonaws.services.lambda.model.InvocationType
 import com.amazonaws.services.lambda.model.Runtime
-import com.amazonaws.services.securitytoken.AWSSecurityTokenService
-
 // end::import-runtime[]
 // tag::import-sts[]
-
+import com.amazonaws.services.securitytoken.AWSSecurityTokenService
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClient
 import com.amazonaws.services.securitytoken.model.GetCallerIdentityRequest
 import com.amazonaws.services.securitytoken.model.GetCallerIdentityResult
-import groovy.json.JsonOutput
-
 // end::import-sts[]
 // tag::import[]
-
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import jp.classmethod.aws.gradle.lambda.AWSLambdaInvokeTask
 import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
