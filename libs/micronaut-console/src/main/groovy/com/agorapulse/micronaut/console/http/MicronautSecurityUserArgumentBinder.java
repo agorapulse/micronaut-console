@@ -32,7 +32,7 @@ import java.util.Optional;
 
 @Singleton
 @Replaces(AnonymousUserArgumentBinder.class)
-@Requires(property = "micronaut.security.enabled")
+@Requires(property = "micronaut.security.enabled", value = "true")
 public class MicronautSecurityUserArgumentBinder implements TypedRequestArgumentBinder<User> {
 
     @Override

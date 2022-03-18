@@ -21,28 +21,21 @@ import com.agorapulse.gru.Gru
 import com.agorapulse.gru.http.Http
 import io.micronaut.context.ApplicationContext
 import io.micronaut.runtime.server.EmbeddedServer
-import io.micronaut.security.token.generator.TokenGenerator
-import io.micronaut.security.token.jwt.generator.claims.ClaimsGenerator
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
-class MicronautSecurityIntegrationSpec extends Specification {
+class MicronautSecurityDisabledIntegrationSpec extends Specification {
 
     @Shared @AutoCleanup ApplicationContext context
     @Shared @AutoCleanup EmbeddedServer server
-    @Shared TokenGenerator tokenGenerator
-    @Shared ClaimsGenerator claimsGenerator
 
     @AutoCleanup Gru gru = Gru.create(Http.create(this))
 
     void setupSpec() {
-        context = ApplicationContext.builder('secured').build()
+        context = ApplicationContext.builder().build()
 
         context.start()
-
-        claimsGenerator = context.getBean(ClaimsGenerator)
-        tokenGenerator = context.getBean(TokenGenerator)
 
         server = context.getBean(EmbeddedServer)
         server.start()
@@ -52,25 +45,10 @@ class MicronautSecurityIntegrationSpec extends Specification {
         gru.prepare(server.URL.toString())
     }
 
-    void 'cannot access the console without authentication'() {
+    void 'can access the console when micronaut.security.enabled is set to false'() {
         expect:
             gru.test {
                 post '/console/execute/result', {
-                    content inline('"Hello World"'), 'text/groovy'
-                }
-                expect {
-                    status UNAUTHORIZED
-                }
-            }
-    }
-
-    void 'can access the console with the token'() {
-        given:
-            String token = tokenGenerator.generateToken(claimsGenerator.generateClaimsSet([sub: 'sherlock'], 3600)).get()
-        expect:
-            gru.test {
-                post '/console/execute/result', {
-                    headers Authorization: "Bearer $token".toString()
                     content inline('"Hello World"'), 'text/groovy'
                 }
                 expect {
