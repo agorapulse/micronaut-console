@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Console</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.1.0.1-micronaut-3.0</span>
+<span id="revnumber">version 1.1.1-micronaut-3.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -152,7 +152,7 @@ for Groovy and for any JSR223 compatible scripting engine such as built-in Ecmas
 }
 
 dependencies {
-    implementation 'com.agorapulse:micronaut-console:1.1.0.1-micronaut-3.0'
+    implementation 'com.agorapulse:micronaut-console:1.1.1-micronaut-3.0'
 
     // for Groovy integration
     implementation 'org.codehaus.groovy:groovy'
@@ -268,6 +268,7 @@ import groovy.json.JsonSlurper
 import jp.classmethod.aws.gradle.lambda.AWSLambdaInvokeTask
 import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
 
+
 task deploySandbox(type: AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
     functionName = "MicronautConsoleSandbox"
     handler = "com.agorapulse.micronaut.console.function.ConsoleHandler::apply"
@@ -306,6 +307,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import jp.classmethod.aws.gradle.lambda.AWSLambdaInvokeTask
 import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
+
 
 task deploySandbox(type: AWSLambdaMigrateFunctionTask, dependsOn: shadowJar) {
     functionName = "MicronautConsoleSandbox"
@@ -1019,8 +1021,8 @@ authorized calls but won&#8217;t be present in any accidental ones.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.1.0.1-micronaut-3.0<br>
-Last updated 2021-12-17 11:33:25 UTC
+Version 1.1.1-micronaut-3.0<br>
+Last updated 2022-03-21 08:35:06 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
