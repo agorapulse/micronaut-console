@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2021 Agorapulse.
+ * Copyright 2020-2022 Agorapulse.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,10 @@
  */
 package com.agorapulse.micronaut.console.function;
 
-import com.agorapulse.micronaut.console.*;
+import com.agorapulse.micronaut.console.ConsoleConfiguration;
+import com.agorapulse.micronaut.console.ConsoleService;
+import com.agorapulse.micronaut.console.Script;
+import com.agorapulse.micronaut.console.User;
 import com.agorapulse.micronaut.console.util.ExceptionSanitizer;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.function.FunctionBean;

@@ -156,7 +156,7 @@ You can specify from which address the users can access the console
 .Address Filter Configuration
 ----
 console:
-include::{root-dir}/examples/micronaut-console-example-application/src/main/resources/application.yml[tags=address]
+include::{root-dir}/examples/micronaut-console-example-application/src/main/resources/application-secured.yml[tags=address]
 ----
 
 WARNING: The addresses must start with a forward slash `/`.
@@ -171,7 +171,7 @@ You can specify which users can access the console
 .User FilterConfiguration
 ----
 console:
-include::{root-dir}/examples/micronaut-console-example-application/src/main/resources/application.yml[tags=users]
+include::{root-dir}/examples/micronaut-console-example-application/src/main/resources/application-secured.yml[tags=users]
 ----
 
 You must use Micronaut Security Integration or define your own implementation of `TypedRequestArgumentBinder<User>` to
@@ -190,7 +190,7 @@ Micronaut Console integrates well with the Micronaut Security library.
 [source]
 .Micronaut Security Configuration
 ----
-include::{root-dir}/examples/micronaut-console-example-application/src/main/resources/application.yml[tags=micronaut-security]
+include::{root-dir}/examples/micronaut-console-example-application/src/main/resources/application-secured.yml[tags=micronaut-security]
 ----
 <1> Enable Micronaut Security
 <2> Enable login endpoint

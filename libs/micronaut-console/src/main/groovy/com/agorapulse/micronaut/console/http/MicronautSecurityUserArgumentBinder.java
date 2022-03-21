@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2021 Agorapulse.
+ * Copyright 2020-2022 Agorapulse.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import java.util.Optional;
 
 @Singleton
 @Replaces(AnonymousUserArgumentBinder.class)
-@Requires(property = "micronaut.security.enabled")
+@Requires(property = "micronaut.security.enabled", value = "true")
 public class MicronautSecurityUserArgumentBinder implements TypedRequestArgumentBinder<User> {
 
     @Override

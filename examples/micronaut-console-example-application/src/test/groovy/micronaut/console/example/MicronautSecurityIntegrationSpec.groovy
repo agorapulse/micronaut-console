@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2021 Agorapulse.
+ * Copyright 2020-2022 Agorapulse.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ class MicronautSecurityIntegrationSpec extends Specification {
     @AutoCleanup Gru gru = Gru.create(Http.create(this))
 
     void setupSpec() {
-        context = ApplicationContext.builder().build()
+        context = ApplicationContext.builder('secured').build()
 
         context.start()
 

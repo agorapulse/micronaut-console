@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agorapulse.micronaut.console.http
+package micronaut.console.example
 
 import com.agorapulse.gru.Gru
 import com.agorapulse.gru.http.Http
@@ -25,19 +25,15 @@ import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
-import java.time.Instant
-
-class UntilSpec extends Specification {
+class MicronautSecurityDisabledIntegrationSpec extends Specification {
 
     @Shared @AutoCleanup ApplicationContext context
     @Shared @AutoCleanup EmbeddedServer server
 
-    @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
+    @AutoCleanup Gru gru = Gru.create(Http.create(this))
 
     void setupSpec() {
-        context = ApplicationContext.builder(
-            'console.until': Instant.now().minusSeconds(3600).toString(),
-        ).build()
+        context = ApplicationContext.builder().build()
 
         context.start()
 
@@ -49,14 +45,14 @@ class UntilSpec extends Specification {
         gru.prepare(server.URL.toString())
     }
 
-    void 'execute a simple groovy script'() {
+    void 'can access the console when micronaut.security.enabled is set to false'() {
         expect:
             gru.test {
-                post('/console/execute') {
-                    content inline('"Hello world!"'), 'text/groovy'
+                post '/console/execute/result', {
+                    content inline('"Hello World"'), 'text/groovy'
                 }
                 expect {
-                    status UNAUTHORIZED
+                    text inline('Hello World')
                 }
             }
     }
