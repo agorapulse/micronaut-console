@@ -27,12 +27,12 @@ import javax.inject.Singleton;
 import java.time.Instant;
 
 @Singleton
-public class CloudAdvisor implements SecurityAdvisor {
+public class EnabledAdvisor implements SecurityAdvisor {
 
     private final ConsoleConfiguration configuration;
     private final ApplicationContext context;
 
-    public CloudAdvisor(ConsoleConfiguration configuration, ApplicationContext context) {
+    public EnabledAdvisor(ConsoleConfiguration configuration, ApplicationContext context) {
         this.configuration = configuration;
         this.context = context;
     }
@@ -45,18 +45,16 @@ public class CloudAdvisor implements SecurityAdvisor {
         }
         //CHECKSTYLE:ON
 
-        // functions has their own security checks
-        if (context.getEnvironment().getActiveNames().contains(Environment.FUNCTION)) {
-            return true;
-        }
+        // functions have their own security checks
+        // otherwise return false
+        return context.getEnvironment().getActiveNames().contains(Environment.FUNCTION);
 
-        // disable by default for the cloud environment (deployed apps)
-        return !context.getEnvironment().getActiveNames().contains(Environment.CLOUD);
+        // disable by default
     }
 
     @Override
     public String toString() {
-        return "Cloud advisor for environments " + String.join(", ", context.getEnvironment().getActiveNames()) + ", enabled = " + configuration.isEnabled();
+        return "Enabled advisor while enabled = " + configuration.isEnabled() + " and until is " + configuration.getUntil();
     }
 
 }

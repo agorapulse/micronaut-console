@@ -29,7 +29,10 @@ class ConsoleHeadersFilterSpec extends Specification {
     void 'header missing'() {
         given:
             gru = Gru.create(Micronaut.build(this) {
-                properties('console.header-name': 'X-Console-Verification')
+                properties(
+                    'console.enabled': true,
+                    'console.header-name': 'X-Console-Verification'
+                )
             }.start())
         expect:
             gru.test {
@@ -45,7 +48,10 @@ class ConsoleHeadersFilterSpec extends Specification {
     void 'header present but the header value not set in the configuration'() {
         given:
             gru = Gru.create(Micronaut.build(this) {
-                properties('console.header-name': 'X-Console-Verification')
+                properties(
+                    'console.enabled': true,
+                    'console.header-name': 'X-Console-Verification'
+                )
             }.start())
         expect:
             gru.test {
@@ -63,6 +69,7 @@ class ConsoleHeadersFilterSpec extends Specification {
         given:
             gru = Gru.create(Micronaut.build(this) {
                 properties(
+                    'console.enabled': true,
                     'console.header-name': 'X-Console-Verification',
                     'console.header-value': 'Paul is King'
                 )
@@ -80,6 +87,7 @@ class ConsoleHeadersFilterSpec extends Specification {
         given:
             gru = Gru.create(Micronaut.build(this) {
                 properties(
+                    'console.enabled': true,
                     'console.header-name': 'X-Console-Verification',
                     'console.header-value': 'Paul is King'
                 )
