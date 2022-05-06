@@ -143,10 +143,9 @@ object or array depending on the situation.
 
 == Security
 
-The security is very important as you can run arbitrary code using the console. By default, the console is disabled
-for the server applications running `cloud` environment which for example includes applications running AWS Elastic Beanstalk.
-For these deployments, you can either set `console.enabled` property to `true`, or you can set `console.until`
-to any ISO date in the future such as `2020-11-12T10:00:00Z`. The second option will enable to console only for a certain period.
+The security is very important as you can run arbitrary code using the console. By default, the console is disabled.
+You need to either set `console.enabled` property to `true`, or you can set `console.until`
+to any ISO date in the future such as `2020-11-12T10:00:00Z`. The second option will enable to console only for a specific period.
 
 === Address Filter
 
@@ -274,10 +273,10 @@ Here is how the builtin advisors look like:
 include::{root-dir}/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/advisors/AddressAdvisor.java[lines=20..-1]
 ----
 
-.Cloud Advisor
+.Enabled Advisor
 [source,java]
 ----
-include::{root-dir}/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/advisors/CloudAdvisor.java[lines=20..-1]
+include::{root-dir}/libs/micronaut-console/src/main/groovy/com/agorapulse/micronaut/console/advisors/EnabledAdvisor.java[lines=20..-1]
 ----
 
 .Until Advisor

@@ -36,6 +36,7 @@ class ConsoleControllerSpec extends Specification {
 
     void setupSpec() {
         context = ApplicationContext.builder(
+            'console.enabled': true,
             'console.addresses': '/127.0.0.1',
             'console.users': USER
         ).build()
