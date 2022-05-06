@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Console</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 1.1.1-micronaut-3.0</span>
+<span id="revnumber">version 2.0.1-micronaut-3.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -152,7 +152,7 @@ for Groovy and for any JSR223 compatible scripting engine such as built-in Ecmas
 }
 
 dependencies {
-    implementation 'com.agorapulse:micronaut-console:1.1.1-micronaut-3.0'
+    implementation 'com.agorapulse:micronaut-console:2.0.1-micronaut-3.0'
 
     // for Groovy integration
     implementation 'org.codehaus.groovy:groovy'
@@ -178,6 +178,16 @@ There are variants for older Micronaut versions as well. You can use <code>micro
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>The console must be explicitly enabled. Add at least following configuration into your application configuration.</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="yaml">console:
+  enabled: true</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -485,10 +495,9 @@ object or array depending on the situation.
 <div class="sect2">
 <h3 id="_security"><a class="anchor" href="#_security"></a>3.4. Security</h3>
 <div class="paragraph">
-<p>The security is very important as you can run arbitrary code using the console. By default, the console is disabled
-for the server applications running <code>cloud</code> environment which for example includes applications running AWS Elastic Beanstalk.
-For these deployments, you can either set <code>console.enabled</code> property to <code>true</code>, or you can set <code>console.until</code>
-to any ISO date in the future such as <code>2020-11-12T10:00:00Z</code>. The second option will enable to console only for a certain period.</p>
+<p>The security is very important as you can run arbitrary code using the console. By default, the console is disabled.
+You need to either set <code>console.enabled</code> property to <code>true</code>, or you can set <code>console.until</code>
+to any ISO date in the future such as <code>2020-11-12T10:00:00Z</code>. The second option will enable to console only for a specific period.</p>
 </div>
 <div class="sect3">
 <h4 id="_address_filter"><a class="anchor" href="#_address_filter"></a>3.4.1. Address Filter</h4>
@@ -847,7 +856,7 @@ public class AddressAdvisor implements SecurityAdvisor {
 </div>
 </div>
 <div class="listingblock">
-<div class="title">Cloud Advisor</div>
+<div class="title">Enabled Advisor</div>
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="java">import com.agorapulse.micronaut.console.ConsoleConfiguration;
 import com.agorapulse.micronaut.console.Script;
@@ -859,12 +868,12 @@ import javax.inject.Singleton;
 import java.time.Instant;
 
 @Singleton
-public class CloudAdvisor implements SecurityAdvisor {
+public class EnabledAdvisor implements SecurityAdvisor {
 
     private final ConsoleConfiguration configuration;
     private final ApplicationContext context;
 
-    public CloudAdvisor(ConsoleConfiguration configuration, ApplicationContext context) {
+    public EnabledAdvisor(ConsoleConfiguration configuration, ApplicationContext context) {
         this.configuration = configuration;
         this.context = context;
     }
@@ -877,18 +886,16 @@ public class CloudAdvisor implements SecurityAdvisor {
         }
         //CHECKSTYLE:ON
 
-        // functions has their own security checks
-        if (context.getEnvironment().getActiveNames().contains(Environment.FUNCTION)) {
-            return true;
-        }
+        // functions have their own security checks
+        // otherwise return false
+        return context.getEnvironment().getActiveNames().contains(Environment.FUNCTION);
 
-        // disable by default for the cloud environment (deployed apps)
-        return !context.getEnvironment().getActiveNames().contains(Environment.CLOUD);
+        // disable by default
     }
 
     @Override
     public String toString() {
-        return "Cloud advisor for environments " + String.join(", ", context.getEnvironment().getActiveNames()) + ", enabled = " + configuration.isEnabled();
+        return "Enabled advisor while enabled = " + configuration.isEnabled() + " and until is " + configuration.getUntil();
     }
 
 }</code></pre>
@@ -1021,8 +1028,8 @@ authorized calls but won&#8217;t be present in any accidental ones.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.1.1-micronaut-3.0<br>
-Last updated 2022-03-21 08:35:06 UTC
+Version 2.0.1-micronaut-3.0<br>
+Last updated 2022-05-06 14:50:56 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
