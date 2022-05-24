@@ -32,25 +32,20 @@ public class DefaultAuditService implements AuditService {
 
     @Override
     public void beforeExecute(Script script, Map<String, Object> bindings) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Before execution:\n" + script + "\n\nBindings: " + bindings);
-        }
+        LOGGER.debug("Before execution:\n{}\n\nBindings: {}", script, bindings);
     }
 
     @Override
     public void afterExecute(Script script, ExecutionResult result) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("After execution:\n" + script + "\n\nResult:\n" + result);
-        }
+        LOGGER.debug("After execution:\n{}\n\nResult:\n{}", script, result);
     }
 
     @Override
     public void onError(Script script, Throwable throwable) {
         if (LOGGER.isInfoEnabled()) {
             StringWriter sw = new StringWriter();
-            PrintWriter writer = new PrintWriter(sw);
-            throwable.printStackTrace(writer);
-            LOGGER.debug("Execution error:\n" + script + "\n\n" + sw.toString());
+            throwable.printStackTrace(new PrintWriter(sw));
+            LOGGER.debug("Execution error:\n" + script + "\n\n" + sw);
         }
     }
 
