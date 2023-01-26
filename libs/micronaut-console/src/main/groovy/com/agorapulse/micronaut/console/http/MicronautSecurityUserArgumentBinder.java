@@ -35,6 +35,12 @@ import java.util.Optional;
 @Requires(property = "micronaut.security.enabled", value = "true")
 public class MicronautSecurityUserArgumentBinder implements TypedRequestArgumentBinder<User> {
 
+    private final AnonymousUserArgumentBinder anonymousUserArgumentBinder;
+
+    public MicronautSecurityUserArgumentBinder(AnonymousUserArgumentBinder anonymousUserArgumentBinder) {
+        this.anonymousUserArgumentBinder = anonymousUserArgumentBinder;
+    }
+
     @Override
     public Argument<User> argumentType() {
         return Argument.of(User.class);
@@ -53,6 +59,7 @@ public class MicronautSecurityUserArgumentBinder implements TypedRequestArgument
                     )
                 );
             }
+            return anonymousUserArgumentBinder.bind(context, source);
         }
 
         return ArgumentBinder.BindingResult.EMPTY;
