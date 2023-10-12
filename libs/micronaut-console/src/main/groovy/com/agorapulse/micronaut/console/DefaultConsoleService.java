@@ -17,9 +17,9 @@
  */
 package com.agorapulse.micronaut.console;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Singleton;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
+import jakarta.inject.Singleton;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class DefaultConsoleService implements ConsoleService {
         this.engines = map;
     }
 
-    @Override @Nonnull
+    @Override @NonNull
     public ExecutionResult execute(Script script) {
         for (SecurityAdvisor a : securityAdvisors) {
             if (!a.isExecutionAllowed(script)) {

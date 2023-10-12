@@ -20,7 +20,7 @@ package com.agorapulse.micronaut.console.groovy;
 import com.agorapulse.micronaut.console.BindingProvider;
 import com.agorapulse.micronaut.console.ide.DslGenerator;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;

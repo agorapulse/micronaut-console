@@ -19,7 +19,7 @@ package com.agorapulse.micronaut.console.ide;
 
 import com.agorapulse.micronaut.console.BindingProvider;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;

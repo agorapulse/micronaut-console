@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 plugins {
-    id "net.ltgt.apt-eclipse" version "0.21"
-    id "com.github.johnrengelman.shadow" version "5.0.0"
+    // id "net.ltgt.apt-eclipse" version "0.21"
+    // id "com.github.johnrengelman.shadow" version "5.0.0"
     id "application"
     id "groovy"
     id "micronaut-compatibility"
@@ -46,7 +46,7 @@ dependencies {
     implementation micronautMigratedDependency("micronaut-security")
     implementation micronautMigratedDependency("micronaut-security-jwt")
     implementation 'javax.inject:javax.inject:1'
-    compile 'io.reactivex.rxjava2:rxjava:2.2.10'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
 
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautExampleApplicationVersion")
     annotationProcessor "io.micronaut:micronaut-inject-java"
@@ -78,9 +78,9 @@ tasks.withType(JavaCompile){
     options.compilerArgs.add('-parameters')
 }
 
-shadowJar {
-    mergeServiceFiles()
-}
+//shadowJar {
+//    mergeServiceFiles()
+//}
 
 run.classpath += configurations.developmentOnly
 run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')

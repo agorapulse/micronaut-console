@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
-    id "org.jetbrains.kotlin.kapt" version "1.6.10"
-    id "org.jetbrains.kotlin.plugin.allopen" version "1.6.10"
-    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "org.jetbrains.kotlin.jvm" version "1.8.22"
+    id "org.jetbrains.kotlin.kapt" version "1.8.22"
+    id "org.jetbrains.kotlin.plugin.allopen" version "1.8.22"
+    // id "com.github.johnrengelman.shadow" version "5.0.0"
     id "application"
 }
 
@@ -89,9 +89,9 @@ compileTestKotlin {
 	}
 }
 
-shadowJar {
-    mergeServiceFiles()
-}
+//shadowJar {
+//    mergeServiceFiles()
+//}
 
 run.classpath += configurations.developmentOnly
 run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')

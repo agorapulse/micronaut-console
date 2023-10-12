@@ -26,7 +26,7 @@ import io.micronaut.context.ApplicationContext;
 import io.micronaut.function.FunctionBean;
 import io.micronaut.function.executor.FunctionInitializer;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.function.UnaryOperator;
 
 @FunctionBean(value = "console", method = "apply")

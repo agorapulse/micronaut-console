@@ -17,8 +17,8 @@
  */
 pluginManagement {
     repositories {
-        jcenter()
         gradlePluginPortal()
+        mavenCentral()
     }
     plugins {
         id 'org.kordamp.gradle.settings'            version kordampPluginVersion

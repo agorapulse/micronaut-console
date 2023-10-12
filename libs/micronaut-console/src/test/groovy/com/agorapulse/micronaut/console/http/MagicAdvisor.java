@@ -20,7 +20,7 @@ package com.agorapulse.micronaut.console.http;
 import com.agorapulse.micronaut.console.Script;
 import com.agorapulse.micronaut.console.SecurityAdvisor;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class MagicAdvisor implements SecurityAdvisor {

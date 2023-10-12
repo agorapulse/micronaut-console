@@ -21,7 +21,7 @@ import com.agorapulse.micronaut.console.BindingProvider
 import com.agorapulse.micronaut.console.http.ParentClass.ChildService
 import groovy.transform.CompileStatic
 
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Singleton
 @CompileStatic

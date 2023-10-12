@@ -17,8 +17,9 @@
  */
 package com.agorapulse.micronaut.console;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
+
 
 /**
  * The script executor service.
@@ -30,7 +31,7 @@ public interface ConsoleService {
      * @param script the script
      * @return the result of the script as String
      */
-    @Nonnull ExecutionResult execute(Script script);
+    @NonNull ExecutionResult execute(Script script);
 
     /**
      * Returns the language based on the content type.

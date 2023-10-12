@@ -23,8 +23,8 @@ import io.micronaut.context.env.Environment;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.runtime.server.EmbeddedServer;
 
-import javax.inject.Provider;
-import javax.inject.Singleton;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 import java.util.Collections;
 import java.util.Map;
 

@@ -15,40 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+plugins {
+    id 'io.micronaut.library' version "$micronautGradlePluginVersion"
+}
+
+micronaut {
+    version micronautVersion
+    importMicronautPlatform = true
+
+    testRuntime 'spock'
+}
+
 dependencies {
-    annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
-    implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
-    testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
-    testCompile platform("io.micronaut:micronaut-bom:$micronautVersion")
-
-    annotationProcessor "io.micronaut:micronaut-inject-java"
-
-    implementation "io.micronaut:micronaut-core"
-
-    compileOnly "io.micronaut:micronaut-inject-groovy"
-
     compileOnly 'io.micronaut:micronaut-http'
     compileOnly 'io.micronaut:micronaut-function'
 
-    testAnnotationProcessor "io.micronaut:micronaut-inject-java"
+    implementation 'io.micronaut.rxjava2:micronaut-rxjava2'
 
-    testImplementation "io.micronaut:micronaut-inject-groovy"
-    testImplementation "io.micronaut:micronaut-http-server-netty"
-
-    testImplementation("org.spockframework:spock-core") {
-        exclude group: "org.codehaus.groovy", module: "groovy-all"
-    }
-
+    testImplementation 'io.micronaut:micronaut-http-server-netty'
     testImplementation "com.agorapulse:gru-micronaut:$gruVersion"
 
     testImplementation 'io.micronaut:micronaut-function'
-    testImplementation 'io.micronaut:micronaut-validation'
+    testImplementation("io.micronaut.validation:micronaut-validation")
+    testImplementation("jakarta.validation:jakarta.validation-api")
 
-    testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0"
-
-    // Micronaut 3 Compatibility
-    annotationProcessor 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'javax.inject:javax.inject:1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+    testImplementation 'org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0'
 }
