@@ -22,7 +22,10 @@ plugins {
 
 micronaut {
     version micronautVersion
-    importMicronautPlatform = true
+
+    if (micronaut.hasProperty('importMicronautPlatform')) {
+        importMicronautPlatform = true
+    }
 
     testRuntime 'spock'
 }
