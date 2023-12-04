@@ -31,7 +31,7 @@ class CloudSpec extends Specification {
     @Shared @AutoCleanup ApplicationContext context
     @Shared @AutoCleanup EmbeddedServer server
 
-    @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
+    @AutoCleanup Gru gru = Gru.create()
 
     void setupSpec() {
         context = ApplicationContext.builder(Environment.CLOUD).build()

@@ -35,6 +35,7 @@ dependencies {
     compileOnly 'io.micronaut:micronaut-function'
 
     implementation 'io.micronaut.rxjava2:micronaut-rxjava2'
+    implementation 'io.micronaut:micronaut-jackson-databind'
 
     testImplementation 'io.micronaut:micronaut-http-server-netty'
     testImplementation "com.agorapulse:gru-micronaut:$gruVersion"
