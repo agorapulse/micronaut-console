@@ -21,8 +21,8 @@ jobs:
         uses: abatilo/release-info-action@v1.3.0
         with:
           owner: agorapulse
-          repo: micronaut-snitch
+          repo: micronaut-console
       - name: Publish GitHub Pages
         uses: gradle/gradle-command-action@v2
         with:
-          arguments: gitPublishPush -Pversion=${{ steps.latest_version.outputs.latest_tag }}-micronaut-4.0 --stacktrace -PmicronautVersion=4.2.0 -PspockVersion=2.0-groovy-4.0 -PgroovyVersion=4.0.15 -PmicronautExampleApplicationVersion=4.2.0 -PmicronautGradlePluginVersion=4.2.0 -Dorg.ajoberstar.grgit.auth.username=${{ secrets.AGORAPULSE_BOT_PERSONAL_TOKEN }}
+          arguments: gitPublishPush -Pversion=${{ steps.latest_version.outputs.latest_tag }} -Dorg.ajoberstar.grgit.auth.username=${{ secrets.AGORAPULSE_BOT_PERSONAL_TOKEN }}

@@ -27,12 +27,6 @@ jobs:
       GRADLE_OPTS: "-Xmx6g -Xms4g"
       CI: true
       COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-    strategy:
-      fail-fast: false
-      matrix:
-        versions:
-          - 'check -PmicronautVersion=3.10.3 -PspockVersion=2.3-groovy-3.0 -PgroovyVersion=3.0.19 -PmicronautExampleApplicationVersion=3.10.3 -PmicronautGradlePluginVersion=3.7.10'
-          - 'check coveralls -PmicronautVersion=4.2.0 -PspockVersion=2.3-groovy-4.0 -PgroovyVersion=4.0.15 -PmicronautExampleApplicationVersion=4.2.0 -PmicronautGradlePluginVersion=4.2.0'
     steps:
     - uses: actions/checkout@v2
     - name: Setup Java 17
@@ -42,4 +36,4 @@ jobs:
         java-version: 17
     - uses: gradle/gradle-command-action@v2
       with:
-        arguments: ${{ matrix.versions }} --scan
+        arguments: check coveralls --scan
