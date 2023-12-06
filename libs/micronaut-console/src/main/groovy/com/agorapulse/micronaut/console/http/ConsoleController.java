@@ -88,7 +88,7 @@ public class ConsoleController {
     }
 
     @Error(ConsoleException.class)
-    public HttpResponse<JsonError> consoleException(ConsoleException exception) {
+    public HttpResponse<ScriptJsonError> consoleException(ConsoleException exception) {
         ScriptJsonError error = new ScriptJsonError(exception.getScript(), sanitizer.extractMessage(exception));
         if (exception instanceof ConsoleSecurityException) {
             return HttpResponse.unauthorized();

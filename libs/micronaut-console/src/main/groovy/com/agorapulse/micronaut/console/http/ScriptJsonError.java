@@ -18,8 +18,13 @@
 package com.agorapulse.micronaut.console.http;
 
 import com.agorapulse.micronaut.console.Script;
+import io.micronaut.core.annotation.Introspected;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.hateoas.JsonError;
 
+@Introspected
+@Produces(MediaType.APPLICATION_JSON)
 public class ScriptJsonError extends JsonError {
 
     private final Script script;
