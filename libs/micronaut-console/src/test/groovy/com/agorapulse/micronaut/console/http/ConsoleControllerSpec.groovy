@@ -18,38 +18,25 @@
 package com.agorapulse.micronaut.console.http
 
 import com.agorapulse.gru.Gru
-import io.micronaut.context.ApplicationContext
-import io.micronaut.runtime.server.EmbeddedServer
+import groovy.transform.CompileDynamic
+import io.micronaut.context.annotation.Property
+import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import jakarta.inject.Inject
 import spock.lang.AutoCleanup
 import spock.lang.Requires
-import spock.lang.Shared
 import spock.lang.Specification
 
+@MicronautTest
+@CompileDynamic
+@Property(name = 'console.enabled', value = 'true')
+@Property(name = 'console.addresses', value =  '/127.0.0.1')
+@Property(name = 'console.users', value =  USER)
+@Property(name = 'micronaut.security.enabled', value =  'false')
 class ConsoleControllerSpec extends Specification {
 
     private static final String USER = 'someuser'
 
-    @Shared @AutoCleanup ApplicationContext context
-    @Shared @AutoCleanup EmbeddedServer server
-
-    @AutoCleanup Gru gru = Gru.create()
-
-    void setupSpec() {
-        context = ApplicationContext.builder(
-            'console.enabled': true,
-            'console.addresses': '/127.0.0.1',
-            'console.users': USER
-        ).build()
-
-        context.start()
-
-        server = context.getBean(EmbeddedServer)
-        server.start()
-    }
-
-    void setup() {
-        gru.prepare(server.URL.toString())
-    }
+    @AutoCleanup @Inject Gru gru
 
     void 'execute a simple groovy script'() {
         expect:
