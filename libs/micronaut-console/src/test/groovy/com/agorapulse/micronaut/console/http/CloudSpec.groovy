@@ -18,7 +18,6 @@
 package com.agorapulse.micronaut.console.http
 
 import com.agorapulse.gru.Gru
-import com.agorapulse.gru.http.Http
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.env.Environment
 import io.micronaut.runtime.server.EmbeddedServer

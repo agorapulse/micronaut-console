@@ -105,6 +105,12 @@ config {
                 enabled = false
             }
         }
+
+        javadoc {
+            aggregate {
+                enabled = false
+            }
+        }
     }
 
 }
