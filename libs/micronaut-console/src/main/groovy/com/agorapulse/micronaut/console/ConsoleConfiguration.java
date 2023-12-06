@@ -21,6 +21,7 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.core.convert.ConversionService;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -115,6 +116,9 @@ public class ConsoleConfiguration {
         }
         if (until instanceof Date) {
             return ((Date)until).toInstant();
+        }
+        if (until instanceof OffsetDateTime) {
+            return ((OffsetDateTime) until).toInstant();
         }
         return ConversionService.SHARED.convert(until, Instant.class).orElseThrow(() ->
             new IllegalArgumentException("Cannot convert " + until + " (" + until.getClass() + ") to Instant")

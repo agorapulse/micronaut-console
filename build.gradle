@@ -146,6 +146,11 @@ subprojects { subproject ->
 
     apply plugin: 'groovy'
 
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
     // useful for Micronaut
     tasks.withType(GroovyCompile) {
         groovyOptions.forkOptions.jvmArgs.add('-Dgroovy.parameters=true')

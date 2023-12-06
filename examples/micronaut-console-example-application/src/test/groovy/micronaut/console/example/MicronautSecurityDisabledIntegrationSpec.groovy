@@ -18,32 +18,14 @@
 package micronaut.console.example
 
 import com.agorapulse.gru.Gru
-import com.agorapulse.gru.http.Http
-import io.micronaut.context.ApplicationContext
-import io.micronaut.runtime.server.EmbeddedServer
-import spock.lang.AutoCleanup
-import spock.lang.Shared
+import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import jakarta.inject.Inject
 import spock.lang.Specification
 
+@MicronautTest
 class MicronautSecurityDisabledIntegrationSpec extends Specification {
 
-    @Shared @AutoCleanup ApplicationContext context
-    @Shared @AutoCleanup EmbeddedServer server
-
-    @AutoCleanup Gru gru = Gru.create(Http.create(this))
-
-    void setupSpec() {
-        context = ApplicationContext.builder().build()
-
-        context.start()
-
-        server = context.getBean(EmbeddedServer)
-        server.start()
-    }
-
-    void setup() {
-        gru.prepare(server.URL.toString())
-    }
+    @Inject Gru gru
 
     void 'can access the console when micronaut.security.enabled is set to false'() {
         expect:
