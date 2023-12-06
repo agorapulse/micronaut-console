@@ -18,7 +18,6 @@
 package com.agorapulse.micronaut.console.http
 
 import com.agorapulse.gru.Gru
-import com.agorapulse.gru.http.Http
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.env.Environment
 import io.micronaut.runtime.server.EmbeddedServer
@@ -31,7 +30,7 @@ class CloudSpec extends Specification {
     @Shared @AutoCleanup ApplicationContext context
     @Shared @AutoCleanup EmbeddedServer server
 
-    @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
+    @AutoCleanup Gru gru = Gru.create()
 
     void setupSpec() {
         context = ApplicationContext.builder(Environment.CLOUD).build()

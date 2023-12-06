@@ -25,6 +25,7 @@ import com.agorapulse.micronaut.console.Script;
 import com.agorapulse.micronaut.console.User;
 import com.agorapulse.micronaut.console.ide.DslGenerator;
 import com.agorapulse.micronaut.console.util.ExceptionSanitizer;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -36,9 +37,7 @@ import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.hateoas.JsonError;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -88,7 +87,7 @@ public class ConsoleController {
     }
 
     @Error(ConsoleException.class)
-    public HttpResponse<JsonError> consoleException(ConsoleException exception) {
+    public HttpResponse<ScriptJsonError> consoleException(ConsoleException exception) {
         ScriptJsonError error = new ScriptJsonError(exception.getScript(), sanitizer.extractMessage(exception));
         if (exception instanceof ConsoleSecurityException) {
             return HttpResponse.unauthorized();

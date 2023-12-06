@@ -18,39 +18,25 @@
 package micronaut.console.example
 
 import com.agorapulse.gru.Gru
-import com.agorapulse.gru.http.Http
-import io.micronaut.context.ApplicationContext
-import io.micronaut.runtime.server.EmbeddedServer
+import groovy.transform.CompileDynamic
+import io.micronaut.context.annotation.Property
 import io.micronaut.security.token.generator.TokenGenerator
-import io.micronaut.security.token.jwt.generator.claims.ClaimsGenerator
-import spock.lang.AutoCleanup
-import spock.lang.Shared
+import io.micronaut.security.token.claims.ClaimsGenerator
+import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import jakarta.inject.Inject
 import spock.lang.Specification
 
+/**
+ * The tests for the Micronaut Security integration.
+ */
+@CompileDynamic
+@MicronautTest(environments = 'secured')
+@Property(name = 'gru.http.client', value = 'jdk')
 class MicronautSecurityIntegrationSpec extends Specification {
 
-    @Shared @AutoCleanup ApplicationContext context
-    @Shared @AutoCleanup EmbeddedServer server
-    @Shared TokenGenerator tokenGenerator
-    @Shared ClaimsGenerator claimsGenerator
-
-    @AutoCleanup Gru gru = Gru.create(Http.create(this))
-
-    void setupSpec() {
-        context = ApplicationContext.builder('secured').build()
-
-        context.start()
-
-        claimsGenerator = context.getBean(ClaimsGenerator)
-        tokenGenerator = context.getBean(TokenGenerator)
-
-        server = context.getBean(EmbeddedServer)
-        server.start()
-    }
-
-    void setup() {
-        gru.prepare(server.URL.toString())
-    }
+    @Inject Gru gru
+    @Inject TokenGenerator tokenGenerator
+    @Inject ClaimsGenerator claimsGenerator
 
     void 'cannot access the console without authentication'() {
         expect:

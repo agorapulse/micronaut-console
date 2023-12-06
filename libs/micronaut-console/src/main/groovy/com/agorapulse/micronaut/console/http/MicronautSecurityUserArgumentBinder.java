@@ -20,19 +20,19 @@ package com.agorapulse.micronaut.console.http;
 import com.agorapulse.micronaut.console.User;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.bind.ArgumentBinder;
 import io.micronaut.core.convert.ArgumentConversionContext;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.bind.binders.TypedRequestArgumentBinder;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
+
 import java.security.Principal;
 import java.util.Optional;
 
 @Singleton
 @Replaces(AnonymousUserArgumentBinder.class)
-@Requires(property = "micronaut.security.enabled", value = "true")
+@Requires(property = "micronaut.security.enabled", notEquals = "false")
 public class MicronautSecurityUserArgumentBinder implements TypedRequestArgumentBinder<User> {
 
     private final AnonymousUserArgumentBinder anonymousUserArgumentBinder;
@@ -48,21 +48,17 @@ public class MicronautSecurityUserArgumentBinder implements TypedRequestArgument
 
     @Override
     public BindingResult<User> bind(ArgumentConversionContext<User> context, HttpRequest<?> source) {
-        if (source.getAttributes().contains("micronaut.once.SecurityFilter")) {
-            final Optional<Principal> existing = source.getUserPrincipal();
-            if (existing.isPresent()) {
-                return () -> Optional.of(
-                    new User(
-                        existing.get().getName(),
-                        null,
-                        source.getRemoteAddress().getAddress().toString()
-                    )
-                );
-            }
-            return anonymousUserArgumentBinder.bind(context, source);
+        final Optional<Principal> existing = source.getUserPrincipal();
+        if (existing.isPresent()) {
+            return () -> Optional.of(
+                new User(
+                    existing.get().getName(),
+                    null,
+                    source.getRemoteAddress().getAddress().toString()
+                )
+            );
         }
-
-        return ArgumentBinder.BindingResult.EMPTY;
+        return anonymousUserArgumentBinder.bind(context, source);
     }
 
 }

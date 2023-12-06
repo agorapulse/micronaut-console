@@ -27,13 +27,13 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
-public class AuthenticationProviderUserPassword implements AuthenticationProvider {
+public class AuthenticationProviderUserPassword implements AuthenticationProvider<HttpRequest<?>> {
 
     // @Override changed in Micronaut 2.x
-    public Publisher<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) {
+    public Publisher<AuthenticationResponse> authenticate(AuthenticationRequest<?, ?> authenticationRequest) {
         return Flowable.create(emitter -> {
             if (authenticationRequest.getIdentity().equals("sherlock") && authenticationRequest.getSecret().equals("password")) {
                 emitter.onNext(new SimpleAuthenticationResponse(new SimpleAuthentication(authenticationRequest.getIdentity().toString())));
@@ -48,4 +48,5 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
     public Publisher<AuthenticationResponse> authenticate(HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authenticationRequest) {
         return authenticate(authenticationRequest);
     }
+
 }

@@ -20,7 +20,7 @@ package com.agorapulse.micronaut.console.jsr223;
 import com.agorapulse.micronaut.console.ConsoleEngine;
 import com.agorapulse.micronaut.console.ConsoleEngineFactory;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import java.util.ArrayList;

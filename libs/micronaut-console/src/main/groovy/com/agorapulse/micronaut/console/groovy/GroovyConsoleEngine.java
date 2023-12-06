@@ -24,7 +24,7 @@ import groovy.lang.GroovyShell;
 import io.micronaut.context.annotation.Requires;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;

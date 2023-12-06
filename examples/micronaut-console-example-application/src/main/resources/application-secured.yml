@@ -12,6 +12,7 @@ micronaut:
           secret:
             generator:
               secret: pleaseChangeThisSecretForANewOne                                  # <4>
+              jws-algorithm: HS256
     intercept-url-map:
       - pattern: /console/**                                                            # <5>
         http-method: GET
@@ -21,6 +22,7 @@ micronaut:
         http-method: POST
         access:
           - isAuthenticated()
+    authentication: bearer                                                              # <7>
 # end::micronaut-security[]
 console:
   # tag::users[]

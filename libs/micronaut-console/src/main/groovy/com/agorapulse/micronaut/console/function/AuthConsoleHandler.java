@@ -25,7 +25,7 @@ import io.micronaut.context.ApplicationContext;
 import io.micronaut.function.FunctionBean;
 import io.micronaut.function.executor.FunctionInitializer;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.function.Function;
 
 @FunctionBean(value = "auth-console", method = "apply")

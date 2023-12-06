@@ -15,19 +15,17 @@ dependencies {
     implementation 'com.agorapulse:micronaut-console:{project-version}'
 
     // for Groovy integration
-    implementation 'org.codehaus.groovy:groovy'
+    implementation 'org.apache.groovy:groovy'
 
     // for Kotlin integration
     implementation "org.jetbrains.kotlin:kotlin-scripting-jsr223:${kotlinVersion}"
 
     // for Micronaut Security integration
-    implementation "io.micronaut:micronaut-security"
-    implementation "io.micronaut:micronaut-security-jwt"
+    implementation "io.micronaut.security:micronaut-security"
+    implementation "io.micronaut.security:micronaut-security-jwt"
 
 }
 ----
-
-TIP: There are variants for older Micronaut versions as well. You can use `micronaut-1.0` or `micronaut-2.0` suffix for different versions of Micronaut.
 
 The console must be explicitly enabled. Add at least the following configuration to your application configuration.
 

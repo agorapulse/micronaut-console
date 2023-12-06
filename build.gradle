@@ -105,6 +105,12 @@ config {
                 enabled = false
             }
         }
+
+        javadoc {
+            aggregate {
+                enabled = false
+            }
+        }
     }
 
 }
@@ -146,15 +152,11 @@ subprojects { subproject ->
 
     apply plugin: 'groovy'
 
-    dependencies {
-        // add your global dependencies
-        testCompile("org.spockframework:spock-core:$spockVersion") {
-            exclude group: "org.codehaus.groovy", module: "groovy-all"
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
-        testCompile 'net.bytebuddy:byte-buddy:1.10.6'
-        testCompile "org.objenesis:objenesis:3.1"
     }
-
     // useful for Micronaut
     tasks.withType(GroovyCompile) {
         groovyOptions.forkOptions.jvmArgs.add('-Dgroovy.parameters=true')

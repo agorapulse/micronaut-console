@@ -1,0 +1,16 @@
+
+[[_release_notes_]]
+= Release Notes
+
+== 3.0.0
+
+=== Breaking Changes
+
+* Migrated to Micronaut 4.x so the minimum JDK version is now 17 and the Groovy version used for scripting is now 4.x.
+
+== 2.0.0
+
+=== Breaking Changes
+
+* The console is disabled by default. To enable it, set the `console.enabled` property to `true` in the  application configuration file or set the CONSOLE_ENABLED environment variable to `true`.
+

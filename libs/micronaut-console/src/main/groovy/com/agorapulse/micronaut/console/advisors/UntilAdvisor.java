@@ -22,7 +22,7 @@ import com.agorapulse.micronaut.console.Script;
 import com.agorapulse.micronaut.console.SecurityAdvisor;
 import io.micronaut.context.annotation.Requires;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.time.Instant;
 
 @Singleton

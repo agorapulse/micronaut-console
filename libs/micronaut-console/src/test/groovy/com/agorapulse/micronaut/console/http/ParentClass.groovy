@@ -19,7 +19,7 @@ package com.agorapulse.micronaut.console.http
 
 import groovy.transform.CompileStatic
 
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @CompileStatic
 class ParentClass {

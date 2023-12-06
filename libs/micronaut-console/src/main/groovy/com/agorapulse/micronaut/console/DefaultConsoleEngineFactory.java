@@ -17,7 +17,7 @@
  */
 package com.agorapulse.micronaut.console;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.List;
 
 /**

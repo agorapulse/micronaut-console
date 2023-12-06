@@ -23,7 +23,7 @@ import com.agorapulse.micronaut.console.SecurityAdvisor;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.Environment;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.time.Instant;
 
 @Singleton

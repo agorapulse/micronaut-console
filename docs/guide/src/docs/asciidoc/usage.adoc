@@ -41,40 +41,6 @@ You can download an up-to-date DSL file from your server by altering the `text` 
  curl http://localhost:8080/console/dsl/gdsl > console.gdsl
 ----
 
-== Serverless Functions
-
-You can use Micronaut Console to create a sandbox function to execute arbitrary code on AWS Lambda or similar serverless function platforms.
-
-Add the following to an existing or new Micronaut function:
-
-[source, groovy, role="primary"]
-.Basic
-----
-include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=import-runtime]
-include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=import]
-
-include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=tasks]
-----
-
-[source, groovy, role="secondary"]
-.Authorized
-----
-include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=import-runtime]
-include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=import-sts]
-include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=import]
-
-include::{root-dir}/examples/micronaut-console-example-function/micronaut-console-example-function.gradle[tags=auth]
-----
-
-Then you can invoke the function from the command line as follows (assuming you have set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_KEY` environment variables)
-
-[source,shell script]
-----
-./gradlew invokeSanbox -Pscript.file path/to/script.groovy
-----
-
-You should use a lambda role restricted to what you are planning to do with the sandbox function to maximize the security.
-
 == Server Applications
 
 The typical use case is to execute a script in your HTTP server application.There are two endpoints,

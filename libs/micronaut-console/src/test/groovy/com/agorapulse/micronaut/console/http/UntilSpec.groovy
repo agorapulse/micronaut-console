@@ -18,7 +18,6 @@
 package com.agorapulse.micronaut.console.http
 
 import com.agorapulse.gru.Gru
-import com.agorapulse.gru.http.Http
 import io.micronaut.context.ApplicationContext
 import io.micronaut.runtime.server.EmbeddedServer
 import spock.lang.AutoCleanup
@@ -32,7 +31,7 @@ class UntilSpec extends Specification {
     @Shared @AutoCleanup ApplicationContext context
     @Shared @AutoCleanup EmbeddedServer server
 
-    @AutoCleanup Gru gru = Gru.equip(Http.steal(this))
+    @AutoCleanup Gru gru = Gru.create()
 
     void setupSpec() {
         context = ApplicationContext.builder(
