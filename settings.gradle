@@ -44,6 +44,14 @@ buildscript {
 
 plugins {
     id 'org.kordamp.gradle.settings'
+    id 'gradle-enterprise' version '3.8.1'
+}
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
+    }
 }
 
 projects {
