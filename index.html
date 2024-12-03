@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Console</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 3.0.0</span>
+<span id="revnumber">version 3.0.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -164,7 +164,7 @@ for Groovy and for any JSR223 compatible scripting engine, such as the built-in 
 }
 
 dependencies {
-    implementation 'com.agorapulse:micronaut-console:3.0.0'
+    implementation 'com.agorapulse:micronaut-console:3.0.1'
 
     // for Groovy integration
     implementation 'org.apache.groovy:groovy'
@@ -286,7 +286,13 @@ The base path <code>/console</code> can be altered with the <code>console.path</
 <div class="listingblock">
 <div class="title">Example Groovy Script</div>
 <div class="content">
-<pre class="prettyprint highlight"><code data-lang="groovy">println "This is a debug message"
+<pre class="prettyprint highlight"><code data-lang="groovy">import io.netty.util.concurrent.FastThreadLocalThread
+
+if (Thread.currentThread() instanceof FastThreadLocalThread) {
+    throw new IllegalStateException('Running on FastThreadLocalThread will fail execution of HTTP client requests')
+}
+
+println "This is a debug message"
 
 "Hello Developer!"</code></pre>
 </div>
@@ -309,6 +315,12 @@ Content-Type: text/groovy
 Accept: text/plain
 
 // language=groovy                                                                      <i class="conum" data-value="1"></i><b>(1)</b>
+import io.netty.util.concurrent.FastThreadLocalThread
+
+if (Thread.currentThread() instanceof FastThreadLocalThread) {
+    throw new IllegalStateException('Running on FastThreadLocalThread will fail execution of HTTP client requests')
+}
+
 println "This is a debug message"
 
 "Hello Developer!"</code></pre>
@@ -932,8 +944,8 @@ authorized calls but won&#8217;t be present in any accidental ones.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 3.0.0<br>
-Last updated 2023-12-06 14:06:11 UTC
+Version 3.0.1<br>
+Last updated 2024-12-03 17:58:38 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
