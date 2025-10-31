@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2024 Agorapulse.
+ * Copyright 2020-2025 Agorapulse.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+    plugins {
+        id 'org.kordamp.gradle.settings'            version kordampPluginVersion
+        id 'org.kordamp.gradle.groovy-project'      version kordampPluginVersion
+        id 'org.kordamp.gradle.checkstyle'          version kordampPluginVersion
+        id 'org.kordamp.gradle.codenarc'            version kordampPluginVersion
+        id 'org.kordamp.gradle.guide'               version kordampPluginVersion
+        id 'org.kordamp.gradle.coveralls'           version kordampPluginVersion
+        id 'org.ajoberstar.git-publish'             version gitPublishPluginVersion
+    }
+}
+
 buildscript {
     repositories {
         mavenCentral()
@@ -28,12 +44,12 @@ buildscript {
         classpath group: 'org.kordamp.gradle',      name: 'guide-gradle-plugin',            version: kordampPluginVersion
         classpath group: 'org.kordamp.gradle',      name: 'coveralls-gradle-plugin',        version: kordampPluginVersion
         classpath group: 'org.ajoberstar',          name: 'gradle-git-publish',             version: gitPublishPluginVersion
-        classpath group: 'io.github.gradle-nexus',  name: 'publish-plugin',                 version: nexusPluginVersion
         classpath group: 'io.micronaut.gradle',     name: 'micronaut-minimal-plugin',       version: micronautGradlePluginVersion
         classpath group: 'org.jetbrains.kotlin',    name: 'kotlin-gradle-plugin',           version: kotlinVersion
         classpath group: 'org.jetbrains.kotlin',    name: 'kotlin-allopen',                 version: kotlinVersion
 
         classpath 'org.apache.httpcomponents:httpclient:4.5.5'
+        classpath "com.vanniktech:gradle-maven-publish-plugin:$mavenCentralPublishPluginVersion"
     }
 }
 
@@ -51,6 +67,12 @@ gradleEnterprise {
 
 projects {
     directories = ['libs', 'docs', 'examples']
+
+    plugins {
+        dir('libs') {
+            id 'com.vanniktech.maven.publish'
+        }
+    }
 }
 
 rootProject.name = 'micronaut-console-root'
