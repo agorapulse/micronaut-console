@@ -110,6 +110,7 @@ config {
         }
 
         javadoc {
+            enabled = false
             aggregate {
                 enabled = false
             }
