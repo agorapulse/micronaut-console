@@ -146,6 +146,19 @@ class ConsoleControllerSpec extends Specification {
             }
     }
 
+    void 'execute groovy script which blocks flux'() {
+        expect:
+        gru.test {
+            post('/console/execute/result') {
+                headers 'X-Console-User': USER
+                content 'blocker.groovy', 'text/groovy'
+            }
+            expect {
+                text 'blocker.txt'
+            }
+        }
+    }
+
     void 'execute unauthorized script'() {
         expect:
             gru.test {
