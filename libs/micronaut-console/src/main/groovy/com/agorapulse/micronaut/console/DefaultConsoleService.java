@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2025 Agorapulse.
+ * Copyright 2020-2026 Agorapulse.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class DefaultConsoleService implements ConsoleService {
         }
 
         Map<String, Object> bindings = new TreeMap<>();
-        bindings.put("user", script.getBody());
+        bindings.put("user", script.getUser());
 
         bindingProviders.forEach(p -> bindings.putAll(p.getBinding()));
 
