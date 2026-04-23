@@ -2,6 +2,12 @@
 [[_release_notes_]]
 = Release Notes
 
+== 4.0.0
+
+=== Breaking Changes
+
+* Dropped the `io.micronaut.rxjava2:micronaut-rxjava2` dependency in preparation for Micronaut Platform 5, which removes it from the BOM. The reactive filter `ConsoleHeadersFilter` has been rewritten on top of Project Reactor (`reactor.core.publisher.Mono`). The filter still returns `org.reactivestreams.Publisher`, so consumers that only interact with the published API through the reactive-streams contract are unaffected. Downstream projects that previously pulled RxJava 2 transitively through `micronaut-console` must now declare their own dependency on `io.micronaut.rxjava2:micronaut-rxjava2` (or migrate to Reactor / RxJava 3).
+
 == 3.0.0
 
 === Breaking Changes

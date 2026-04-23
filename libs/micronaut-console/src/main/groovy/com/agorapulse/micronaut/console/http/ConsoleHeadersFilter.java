@@ -26,10 +26,10 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.FilterChain;
 import io.micronaut.http.filter.HttpFilter;
-import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 @Filter("${console.path:/console}/**")
 @Requires(property = "console.header-name")
@@ -49,21 +49,18 @@ public class ConsoleHeadersFilter implements HttpFilter {
 
     @Override
     public Publisher<? extends HttpResponse<?>> doFilter(HttpRequest<?> request, FilterChain chain) {
-        return Flowable.just(request)
-            .switchMap(req -> {
-                if (HttpMethod.POST.equals(req.getMethod())) {
-                    String headerValue = req.getHeaders().get(configuration.getHeaderName());
-                    if (headerValue == null) {
-                        return Flowable.just(HttpResponse.status(HttpStatus.FORBIDDEN, "Missing verification header"));
-                    }
+        if (HttpMethod.POST.equals(request.getMethod())) {
+            String headerValue = request.getHeaders().get(configuration.getHeaderName());
+            if (headerValue == null) {
+                return Mono.just(HttpResponse.status(HttpStatus.FORBIDDEN, "Missing verification header"));
+            }
 
-                    if (!headerValue.equals(configuration.getHeaderValue())) {
-                        return Flowable.just(HttpResponse.status(HttpStatus.FORBIDDEN, "Wrong value of the verification header"));
-                    }
-                }
+            if (!headerValue.equals(configuration.getHeaderValue())) {
+                return Mono.just(HttpResponse.status(HttpStatus.FORBIDDEN, "Wrong value of the verification header"));
+            }
+        }
 
-                return chain.proceed(req);
-            });
+        return chain.proceed(request);
     }
 
 }
