@@ -92,7 +92,7 @@ $(addBlockSwitches);
 <h1>Micronaut Console</h1>
 <div class="details">
 <span id="author" class="author">Vladimir Orany</span><br>
-<span id="revnumber">version 3.0.4</span>
+<span id="revnumber">version 4.0.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -123,14 +123,19 @@ $(addBlockSwitches);
 </li>
 <li><a href="#_release_notes_">4. Release Notes</a>
 <ul class="sectlevel2">
-<li><a href="#_3_0_0">4.1. 3.0.0</a>
+<li><a href="#_4_0_0">4.1. 4.0.0</a>
 <ul class="sectlevel3">
 <li><a href="#_breaking_changes">4.1.1. Breaking Changes</a></li>
 </ul>
 </li>
-<li><a href="#_2_0_0">4.2. 2.0.0</a>
+<li><a href="#_3_0_0">4.2. 3.0.0</a>
 <ul class="sectlevel3">
 <li><a href="#_breaking_changes_2">4.2.1. Breaking Changes</a></li>
+</ul>
+</li>
+<li><a href="#_2_0_0">4.3. 2.0.0</a>
+<ul class="sectlevel3">
+<li><a href="#_breaking_changes_3">4.3.1. Breaking Changes</a></li>
 </ul>
 </li>
 </ul>
@@ -164,7 +169,7 @@ for Groovy and for any JSR223 compatible scripting engine, such as the built-in 
 }
 
 dependencies {
-    implementation 'com.agorapulse:micronaut-console:3.0.4'
+    implementation 'com.agorapulse:micronaut-console:4.0.0'
 
     // for Groovy integration
     implementation 'org.apache.groovy:groovy'
@@ -914,9 +919,22 @@ authorized calls but won&#8217;t be present in any accidental ones.</p>
 <h2 id="_release_notes_"><a class="anchor" href="#_release_notes_"></a>4. Release Notes</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_3_0_0"><a class="anchor" href="#_3_0_0"></a>4.1. 3.0.0</h3>
+<h3 id="_4_0_0"><a class="anchor" href="#_4_0_0"></a>4.1. 4.0.0</h3>
 <div class="sect3">
 <h4 id="_breaking_changes"><a class="anchor" href="#_breaking_changes"></a>4.1.1. Breaking Changes</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Dropped the <code>io.micronaut.rxjava2:micronaut-rxjava2</code> dependency in preparation for Micronaut Platform 5, which removes it from the BOM. The reactive filter <code>ConsoleHeadersFilter</code> has been rewritten on top of Project Reactor (<code>reactor.core.publisher.Mono</code>). The filter still returns <code>org.reactivestreams.Publisher</code>, so consumers that only interact with the published API through the reactive-streams contract are unaffected. Downstream projects that previously pulled RxJava 2 transitively through <code>micronaut-console</code> must now declare their own dependency on <code>io.micronaut.rxjava2:micronaut-rxjava2</code> (or migrate to Reactor / RxJava 3).</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_0_0"><a class="anchor" href="#_3_0_0"></a>4.2. 3.0.0</h3>
+<div class="sect3">
+<h4 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a>4.2.1. Breaking Changes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -927,9 +945,9 @@ authorized calls but won&#8217;t be present in any accidental ones.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_2_0_0"><a class="anchor" href="#_2_0_0"></a>4.2. 2.0.0</h3>
+<h3 id="_2_0_0"><a class="anchor" href="#_2_0_0"></a>4.3. 2.0.0</h3>
 <div class="sect3">
-<h4 id="_breaking_changes_2"><a class="anchor" href="#_breaking_changes_2"></a>4.2.1. Breaking Changes</h4>
+<h4 id="_breaking_changes_3"><a class="anchor" href="#_breaking_changes_3"></a>4.3.1. Breaking Changes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -944,8 +962,8 @@ authorized calls but won&#8217;t be present in any accidental ones.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 3.0.4<br>
-Last updated 2026-01-19 13:14:12 UTC
+Version 4.0.0<br>
+Last updated 2026-04-23 08:00:12 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
