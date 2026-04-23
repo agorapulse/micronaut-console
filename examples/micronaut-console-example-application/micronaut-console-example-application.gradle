@@ -50,7 +50,7 @@ dependencies {
     implementation 'org.apache.groovy:groovy'
     implementation 'io.micronaut.security:micronaut-security'
     implementation 'io.micronaut.security:micronaut-security-jwt'
-    implementation 'io.micronaut.rxjava2:micronaut-rxjava2'
+    implementation 'io.micronaut.reactor:micronaut-reactor'
 
 
     implementation 'io.micronaut:micronaut-inject'
