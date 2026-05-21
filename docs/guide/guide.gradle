@@ -16,34 +16,16 @@
  * limitations under the License.
  */
 plugins {
-    id 'org.kordamp.gradle.guide'
-    id 'org.ajoberstar.git-publish'
+    id 'com.agorapulse.gradle.guide' version "$agorapulseGradlePluginsVersion"
 }
 
-config {
-    publishing {
-        enabled = false
+agorapulse {
+    guide {
+        repoUri = "https://github.com/${slug}.git"
     }
-    docs {
-        guide {
-            publish {
-                enabled = true
-            }
-        }
-    }
-}
-
-configurations {
-    asciidoctorExtensions
-}
-
-dependencies {
-    asciidoctorExtensions 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.3'
 }
 
 asciidoctor {
-    configurations 'asciidoctorExtensions'
-
     baseDirFollowsSourceDir()
 
     attributes = [
@@ -52,5 +34,4 @@ asciidoctor {
         'root-dir': rootDir,
         'project-slug': slug
     ]
-
 }

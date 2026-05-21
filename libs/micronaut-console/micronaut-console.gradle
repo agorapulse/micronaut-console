@@ -16,7 +16,14 @@
  * limitations under the License.
  */
 plugins {
-    id 'io.micronaut.library' version "$micronautGradlePluginVersion"
+    id 'groovy'
+    id 'checkstyle'
+    id 'codenarc'
+    id 'io.micronaut.library'                              version "$micronautGradlePluginVersion"
+    id 'com.agorapulse.gradle.micronaut-library'           version "$agorapulseGradlePluginsVersion"
+    id 'com.agorapulse.gradle.groovy-common-configuration' version "$agorapulseGradlePluginsVersion"
+    id 'com.agorapulse.gradle.micronaut-compatibility'     version "$agorapulseGradlePluginsVersion"
+    id 'com.vanniktech.maven.publish'                      version "$mavenCentralPublishPluginVersion"
 }
 
 micronaut {
@@ -25,7 +32,19 @@ micronaut {
     testRuntime 'spock'
 }
 
+checkstyle {
+    toolVersion = '10.18.2'
+    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+}
+
+codenarc {
+    toolVersion = '3.7.0-groovy-4.0'
+    configFile = rootProject.file('config/codenarc/codenarc.xml')
+}
+
 dependencies {
+    api 'org.jspecify:jspecify:1.0.0'
+
     compileOnly 'io.micronaut:micronaut-http'
     compileOnly 'io.micronaut:micronaut-function'
 
@@ -39,5 +58,5 @@ dependencies {
     testImplementation("io.micronaut.validation:micronaut-validation")
     testImplementation("jakarta.validation:jakarta.validation-api")
 
-    testImplementation 'org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0'
+    testImplementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1'
 }

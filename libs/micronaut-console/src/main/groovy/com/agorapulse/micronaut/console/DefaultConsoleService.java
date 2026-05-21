@@ -17,9 +17,9 @@
  */
 package com.agorapulse.micronaut.console;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.scheduling.TaskExecutors;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import java.util.HashMap;
