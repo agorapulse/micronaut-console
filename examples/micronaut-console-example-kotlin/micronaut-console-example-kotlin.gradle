@@ -21,12 +21,6 @@ plugins {
     id("io.micronaut.minimal.application")
 }
 
-config {
-    publishing {
-        enabled = false
-    }
-}
-
 micronaut {
     importMicronautPlatform = true
     runtime("netty")

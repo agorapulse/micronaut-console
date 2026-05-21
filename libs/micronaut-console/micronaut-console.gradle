@@ -15,16 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id 'io.micronaut.library' version "$micronautGradlePluginVersion"
-}
-
-micronaut {
-    version micronautVersion
-    importMicronautPlatform = true
-    testRuntime 'spock'
-}
-
 dependencies {
     compileOnly 'io.micronaut:micronaut-http'
     compileOnly 'io.micronaut:micronaut-function'
@@ -36,8 +26,8 @@ dependencies {
     testImplementation "com.agorapulse:gru-micronaut:$gruVersion"
 
     testImplementation 'io.micronaut:micronaut-function'
-    testImplementation("io.micronaut.validation:micronaut-validation")
-    testImplementation("jakarta.validation:jakarta.validation-api")
+    testImplementation 'io.micronaut.validation:micronaut-validation'
+    testImplementation 'jakarta.validation:jakarta.validation-api'
 
     testImplementation 'org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0'
 }

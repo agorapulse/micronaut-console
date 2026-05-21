@@ -17,31 +17,25 @@
  */
 plugins {
     id 'groovy'
-    id 'io.micronaut.application' version '4.2.0'
-}
-
-config {
-    publishing {
-        enabled = false
-    }
+    id 'io.micronaut.application' version "$micronautGradlePluginVersion"
 }
 
 repositories {
     mavenCentral()
-
 }
 
 graalvmNative.toolchainDetection = false
 
 micronaut {
     importMicronautPlatform = true
-    version('4.2.0')
+    version micronautVersion
     runtime('netty')
     testRuntime('spock2')
     processing {
         incremental(false)
     }
 }
+
 dependencies {
     annotationProcessor 'io.micronaut:micronaut-inject-java'
     annotationProcessor 'io.micronaut.validation:micronaut-validation-processor'
