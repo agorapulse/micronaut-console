@@ -18,30 +18,21 @@
 package micronaut.console.example;
 
 import io.micronaut.http.HttpRequest;
-import io.micronaut.security.authentication.AuthenticationException;
-import io.micronaut.security.authentication.AuthenticationFailed;
-import io.micronaut.security.authentication.AuthenticationProvider;
+import io.micronaut.security.authentication.AuthenticationFailureReason;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Mono;
-
+import io.micronaut.security.authentication.provider.HttpRequestAuthenticationProvider;
 import jakarta.inject.Singleton;
 
 @Singleton
-public class AuthenticationProviderUserPassword implements AuthenticationProvider<HttpRequest<?>> {
+public class AuthenticationProviderUserPassword<B> implements HttpRequestAuthenticationProvider<B> {
 
-    // @Override changed in Micronaut 2.x
-    public Publisher<AuthenticationResponse> authenticate(AuthenticationRequest<?, ?> authenticationRequest) {
-        if (authenticationRequest.getIdentity().equals("sherlock") && authenticationRequest.getSecret().equals("password")) {
-            return Mono.just(new SimpleAuthenticationResponse(new SimpleAuthentication(authenticationRequest.getIdentity().toString())));
+    @Override
+    public AuthenticationResponse authenticate(HttpRequest<B> httpRequest, AuthenticationRequest<String, String> authenticationRequest) {
+        if ("sherlock".equals(authenticationRequest.getIdentity()) && "password".equals(authenticationRequest.getSecret())) {
+            return AuthenticationResponse.success(authenticationRequest.getIdentity());
         }
-        return Mono.error(new AuthenticationException(new AuthenticationFailed()));
-    }
-
-    // @Override changed in Micronaut 2.x
-    public Publisher<AuthenticationResponse> authenticate(HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authenticationRequest) {
-        return authenticate(authenticationRequest);
+        return AuthenticationResponse.failure(AuthenticationFailureReason.CREDENTIALS_DO_NOT_MATCH);
     }
 
 }

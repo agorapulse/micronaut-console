@@ -1,10 +1,10 @@
 com.agorapulse.micronaut.console.ConsoleException: Exception during script execution
-	at io.micronaut.core.propagation.PropagatedContext.lambda$wrap$4(PropagatedContext.java:228)
-	at io.micronaut.core.propagation.PropagatedContext.lambda$wrap$4(PropagatedContext.java:228)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
-	at java.base/java.lang.Thread.run(Thread.java:840)
+	at io.micronaut.core.propagation.ThreadContext.propagate(ThreadContext.java:111)
+	at io.micronaut.core.propagation.PropagatedContextImpl.propagateCall(PropagatedContextImpl.java:121)
+	at io.micronaut.core.propagation.PropagatedContextImpl.lambda$wrap$0(PropagatedContextImpl.java:160)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328)
+	at java.base/java.util.concurrent.ThreadPerTaskExecutor$ThreadBoundFuture.run(ThreadPerTaskExecutor.java:323)
+	at java.base/java.lang.VirtualThread.run(VirtualThread.java:456)
 Caused by: java.lang.RuntimeException: You are exceptional!
 	at Script1.run(Script1.groovy:1)
 	... 6 more

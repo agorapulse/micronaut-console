@@ -17,8 +17,11 @@
  */
 plugins {
     id 'groovy'
-    id 'io.micronaut.application' version "$micronautGradlePluginVersion"
 }
+
+apply plugin: 'io.micronaut.application'
+apply plugin: 'com.agorapulse.gradle.micronaut-application'
+apply plugin: 'com.agorapulse.gradle.groovy-common-configuration'
 
 repositories {
     mavenCentral()
@@ -28,7 +31,7 @@ graalvmNative.toolchainDetection = false
 
 micronaut {
     importMicronautPlatform = true
-    version micronautVersion
+    version(micronautVersion)
     runtime('netty')
     testRuntime('spock2')
     processing {
@@ -60,4 +63,6 @@ dependencies {
 
 test.classpath += configurations.developmentOnly
 
-mainClassName = 'micronaut.console.example.Application'
+application {
+    mainClass.set('micronaut.console.example.Application')
+}

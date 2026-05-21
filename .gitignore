@@ -2,6 +2,7 @@
 # Gradle
 build/
 .gradle/
+.kotlin/
 
 # IDEs
 

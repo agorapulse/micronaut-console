@@ -15,10 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id("org.jetbrains.kotlin.jvm")
-    id("org.jetbrains.kotlin.plugin.allopen")
-    id("io.micronaut.minimal.application")
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'org.jetbrains.kotlin.plugin.allopen'
+apply plugin: 'io.micronaut.minimal.application'
+
+// Kotlin 2.2's latest supported JVM target is one ahead of the build's
+// (project baseline JVM 25). Demote the Kotlin <-> Java target-mismatch
+// check to a warning so we don't down-target the published artifact.
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    jvmTargetValidationMode = org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode.WARNING
 }
 
 micronaut {
