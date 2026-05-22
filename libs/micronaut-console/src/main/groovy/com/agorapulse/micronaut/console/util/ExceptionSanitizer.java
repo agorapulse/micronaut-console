@@ -32,6 +32,9 @@ public class ExceptionSanitizer {
         "groovy.lang",
         "sun",
         "java.lang.reflect",
+        "java.lang.VirtualThread",
+        "java.util.concurrent",
+        "io.micronaut.core.propagation",
         "com.agorapulse.micronaut.console"
     );
 
