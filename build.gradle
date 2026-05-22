@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 plugins {
-    id 'lifecycle-base'
+    id 'com.agorapulse.gradle.root-project'
 }
 
 if (!project.hasProperty('mavenCentralUsername'))       ext.mavenCentralUsername       = System.getenv('MAVEN_CENTRAL_USERNAME') ?: '**UNDEFINED**'
@@ -31,52 +31,52 @@ allprojects {
     }
 }
 
-subprojects {
-    plugins.withId('com.agorapulse.gradle.micronaut-library') {
-        micronaut {
-            importMicronautPlatform = true
-            testRuntime 'spock'
-            processing {
-                incremental false
-            }
-        }
-    }
-
-    plugins.withId('com.vanniktech.maven.publish') {
-        mavenPublishing {
-            publishToMavenCentral(true)
-            signAllPublications()
-
-            pom {
-                name = 'Micronaut Console'
-                description = 'Web console for Micronaut applications.'
-                inceptionYear = '2020'
-                url = "https://github.com/${slug}"
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'musketyr'
-                        name = 'Vladimir Orany'
-                        url = 'https://github.com/musketyr/'
-                    }
-                }
-                scm {
-                    url = "https://github.com/${slug}.git"
-                    connection = "scm:git:git://github.com/${slug}.git"
-                    developerConnection = "scm:git:ssh://git@github.com/${slug}.git"
+gradleProjects {
+    subprojects {
+        dirs(['libs']) {
+            micronaut {
+                importMicronautPlatform = true
+                testRuntime 'spock'
+                processing {
+                    incremental false
                 }
             }
-        }
 
-        signing {
-            useInMemoryPgpKeys(rootProject.ext.signingInMemoryKey, rootProject.ext.signingInMemoryKeyPassword)
-            sign publishing.publications
+            mavenPublishing {
+                publishToMavenCentral(true)
+                signAllPublications()
+
+                pom {
+                    name = 'Micronaut Console'
+                    description = 'Web console for Micronaut applications.'
+                    inceptionYear = '2020'
+                    url = "https://github.com/${slug}"
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'musketyr'
+                            name = 'Vladimir Orany'
+                            url = 'https://github.com/musketyr/'
+                        }
+                    }
+                    scm {
+                        url = "https://github.com/${slug}.git"
+                        connection = "scm:git:git://github.com/${slug}.git"
+                        developerConnection = "scm:git:ssh://git@github.com/${slug}.git"
+                    }
+                }
+            }
+
+            signing {
+                useInMemoryPgpKeys(rootProject.ext.signingInMemoryKey, rootProject.ext.signingInMemoryKeyPassword)
+                sign publishing.publications
+            }
         }
     }
 }
