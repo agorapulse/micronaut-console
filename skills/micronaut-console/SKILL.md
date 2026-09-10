@@ -7,7 +7,7 @@ allowed-tools: Bash(python3 ${CLAUDE_SKILL_DIR}/scripts/console.py *)
 
 # Micronaut Console
 
-Micronaut Console (`com.agorapulse:micronaut-console`) is an HTTP endpoint that executes a script **inside the running application**: same classpath, same beans, same database connections, same cloud credentials. That is what makes it the fastest way to verify an experiment against real data, and also what makes it dangerous. Full guide: https://agorapulse.github.io/micronaut-console/
+Micronaut Console (`com.agorapulse:micronaut-console`, inspired by the Grails Console plugin) is an HTTP endpoint, or a function, that executes a script **inside the running application**: same classpath, same beans, same database connections, same cloud credentials. That is what makes it the fastest way to verify an experiment against real data, and also what makes it dangerous. Full guide: https://agorapulse.github.io/micronaut-console/
 
 ## When to reach for it
 
@@ -20,7 +20,7 @@ Do not use it as a substitute for a test when the behaviour is deterministic and
 
 ## The request
 
-One script = one HTTP request. Body is the script source, `Content-Type` selects the language (`text/groovy` default, `application/javascript`, `text/x-kotlin` when the engine is on the classpath).
+One script = one HTTP request. Body is the script source, `Content-Type` selects the language: `text/groovy` or `application/groovy` (default, `console.language`), `application/javascript` or `text/x-kotlin` when a JSR-223 engine for it is on the classpath. Groovy scripts also get an `out` binding (the `PrintWriter` behind `println`).
 
 ```http
 POST http://{{host}}/console/execute/result
@@ -41,7 +41,7 @@ println ctx.getBean(ObjectMapper).writerWithDefaultPrettyPrinter().writeValueAsS
 | `POST` | `/console/execute/result` | plain text: `# Out #` section with everything printed, then `# Result #` with the last expression; only the result when nothing was printed |
 | `POST` | `/console/execute` | JSON `{"result": <last expression>, "out": "<printed text>"}`; prefer it when a program parses the answer |
 | `GET` | `/console/dsl/text` | list of binding variables and their types |
-| `GET` | `/console/dsl/gdsl`, `/console/dsl/dsld` | IntelliJ / Eclipse descriptor for code completion |
+| `GET` | `/console/dsl/gdsl`, `/console/dsl/dsld` | IntelliJ / Eclipse descriptor for code completion; `curl http://localhost:8080/console/dsl/gdsl > console.gdsl` next to the scripts gives completion for the bindings |
 
 - **Discover the bindings before writing a script.** `GET /console/dsl/text` (or `console.py --bindings`) lists every variable the application injects with its type. `ctx` (`io.micronaut.context.ApplicationContext`), `user` (`com.agorapulse.micronaut.console.User`) and `request` (`HttpRequest`, HTTP only) are always there; applications add their own through `BindingProvider` beans (a pre-resolved service, a tenant, a repository), and using those beats a chain of `ctx.getBean` calls. The `gdsl` variant gives IntelliJ completion for them.
 - **Choose the response format on purpose.** `/console/execute/result` is for eyes: everything printed, then the last expression as text. `/console/execute` returns JSON with `out` (printed text) and `result` (the last expression serialized by Jackson, so a `Map` or `List` comes back as a JSON object or array). Use JSON when you will parse the answer: comparing counts, diffing state before and after, feeding another script.
@@ -137,11 +137,15 @@ Use `{{variables}}` for hosts and headers so the same file runs on every environ
 ```groovy
 dependencies {
     implementation 'com.agorapulse:micronaut-console:<version>'
-    runtimeOnly 'org.apache.groovy:groovy'          // compiles the scripts; any JSR-223 engine can be added the same way
+    runtimeOnly 'org.apache.groovy:groovy'                                        // Groovy scripts (text/groovy)
+    // runtimeOnly "org.jetbrains.kotlin:kotlin-scripting-jsr223:${kotlinVersion}"  // Kotlin scripts (text/x-kotlin)
+    // runtimeOnly 'org.openjdk.nashorn:nashorn-core:<version>'                     // JavaScript (application/javascript); Nashorn left the JDK in 15
 }
 ```
 
-The console is disabled by default. Minimal local configuration is `console.enabled: true`. For anything shared, stack the layers; any advisor that refuses blocks the execution:
+Any JSR-223 engine on the classpath is picked up by `JavaScriptingConsoleEngineFactory` and selected through the `Content-Type` of the request.
+
+The console is disabled by default (since 2.0.0). Minimal local configuration is `console.enabled: true`, or the `CONSOLE_ENABLED=true` environment variable. For anything shared, stack the layers; any advisor that refuses blocks the execution:
 
 ```yaml
 console:
@@ -153,7 +157,48 @@ console:
   header-value: ${CONSOLE_HEADER_VALUE}        # optional; only presence is checked when absent
 ```
 
+How the layers behave:
+
+- `enabled` / `until`: `EnabledAdvisor` allows execution when `enabled` is true or `until` is still in the future. In the `function` environment (AWS Lambda and similar) it always allows, because the function's own authorization is expected to gate the call.
+- `addresses`: compared with the remote address of the request as Micronaut sees it. Behind a reverse proxy (Nginx, a load balancer) configure hostname resolution so the real client address is used, otherwise every caller shares the proxy address: https://sergiodelamo.com/blog/host-and-ip-resolution-micronaut-load-balancer-elastic-beanstalk.html
+- `users`: compared with `user.id`, so a user binder must supply one (see Micronaut Security below). Without a binder every request is anonymous and the advisor refuses everything.
+- `header-name` / `header-value`: `ConsoleHeadersFilter` checks every `POST` under `console.path` and answers `403` with "Missing verification header" or "Wrong value of the verification header". `GET` (the DSL endpoints) is not checked. Leaving `header-value` unset while `header-name` is set logs an error at startup and makes every POST fail.
+
 Recommended production posture: reachable only from localhost through an SSH/SSM tunnel, header check on, audit events shipped to monitoring, WAF rule blocking `/console` from the public side.
+
+### Micronaut Security
+
+```groovy
+implementation 'io.micronaut.security:micronaut-security'
+implementation 'io.micronaut.security:micronaut-security-jwt'
+```
+
+```yaml
+micronaut:
+  security:
+    enabled: true
+    endpoints:
+      login:
+        enabled: true
+    token:
+      jwt:
+        enabled: true
+        signatures:
+          secret:
+            generator:
+              secret: ${JWT_GENERATOR_SECRET}
+              jws-algorithm: HS256
+    intercept-url-map:
+      - pattern: /console/**
+        http-method: GET             # DSL descriptors stay anonymous so IDEs can fetch them
+        access: [isAnonymous()]
+      - pattern: /console/**
+        http-method: POST            # scripts need a logged-in user
+        access: [isAuthenticated()]
+    authentication: bearer
+```
+
+With security enabled, `MicronautSecurityUserArgumentBinder` fills `user` from the authenticated principal (`id` = principal name, `address` = remote address), which is what `console.users` and the audit log rely on. Without Micronaut Security, provide your own `TypedRequestArgumentBinder<User>` (see `SimpleUserBinder` in the tests) to identify callers. Callers log in first (`POST /login` with `{"username", "password"}`), then send `Authorization: Bearer <access_token>`; `execute.sh` does it with cURL and `jq`, `external.http` with an IntelliJ response handler, both reading credentials from a gitignored `credentials.json` / `http-client.private.env.json`.
 
 Extension points are plain beans:
 
@@ -164,7 +209,15 @@ Extension points are plain beans:
 
 ## Functions (AWS Lambda and friends)
 
-`ConsoleHandler` (`@FunctionBean("console")`) is a `UnaryOperator<String>`: the payload is the script body, the reply is the same text as `/console/execute/result`, the user is anonymous. `AuthConsoleHandler` (`@FunctionBean("auth-console")`) takes an `AuthorizedScript` JSON payload with `body` and a `user` object (`id`, `name`, `address`) so the audit trail carries the caller. `console.enabled` / `console.until` apply; the address and header advisors do not, because there is no HTTP request.
+`ConsoleHandler` (`@FunctionBean("console")`) is a `UnaryOperator<String>`: the payload is the script body, the reply is the same text as `/console/execute/result`, the user is anonymous. `AuthConsoleHandler` (`@FunctionBean("auth-console")`) takes an `AuthorizedScript` JSON payload with `body` and a `user` object (`id`, `name`, `address`) so the audit trail carries the caller. In the `function` environment the console is enabled without `console.enabled` (the function's own authorization is the gate); `console.until`, when set, still limits it. The address and header advisors do not apply because there is no HTTP request.
+
+## Versions
+
+| Version | Requires | Notes |
+| --- | --- | --- |
+| 4.x | Micronaut 4/5, JDK 17+ | `ConsoleHeadersFilter` on Project Reactor; RxJava 2 no longer pulled transitively, declare it yourself if you still need it |
+| 3.x | Micronaut 4, JDK 17+, Groovy 4 | |
+| 2.x | | console disabled by default; `console.enabled` or `CONSOLE_ENABLED=true` required |
 
 ## Working in this repository
 
