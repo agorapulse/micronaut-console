@@ -43,8 +43,9 @@ println ctx.getBean(ObjectMapper).writerWithDefaultPrettyPrinter().writeValueAsS
 | `GET` | `/console/dsl/text` | list of binding variables and their types |
 | `GET` | `/console/dsl/gdsl`, `/console/dsl/dsld` | IntelliJ / Eclipse descriptor for code completion |
 
-- Bindings in every script: `ctx` (`io.micronaut.context.ApplicationContext`), `user` (`com.agorapulse.micronaut.console.User`), `request` (`HttpRequest`, HTTP only). Applications add more through `BindingProvider` beans; `GET /console/dsl/text` shows the effective list.
-- The last expression is the result. End with `''` or `null` when the last call returns a large object, otherwise it is stringified into the response.
+- **Discover the bindings before writing a script.** `GET /console/dsl/text` (or `console.py --bindings`) lists every variable the application injects with its type. `ctx` (`io.micronaut.context.ApplicationContext`), `user` (`com.agorapulse.micronaut.console.User`) and `request` (`HttpRequest`, HTTP only) are always there; applications add their own through `BindingProvider` beans (a pre-resolved service, a tenant, a repository), and using those beats a chain of `ctx.getBean` calls. The `gdsl` variant gives IntelliJ completion for them.
+- **Choose the response format on purpose.** `/console/execute/result` is for eyes: everything printed, then the last expression as text. `/console/execute` returns JSON with `out` (printed text) and `result` (the last expression serialized by Jackson, so a `Map` or `List` comes back as a JSON object or array). Use JSON when you will parse the answer: comparing counts, diffing state before and after, feeding another script.
+- The last expression is the result. End with `''` or `null` when the last call returns a large object you do not want serialized into the response.
 - Status codes: `400` with the sanitized exception and the script echoed back on a compile or runtime error, `401` when a security advisor refuses (console disabled, `until` expired, address or user not allowed), `403` from `ConsoleHeadersFilter` when the configured header is missing or wrong.
 - Scripts run on the blocking executor (`@ExecuteOn(TaskExecutors.BLOCKING)`), so blocking clients and JDBC are safe, but a long loop holds a thread and a connection for the whole request and can hit a proxy or tunnel timeout. Batch, print progress, re-invoke.
 - Imports are explicit (only `java.lang`, `java.util`, `java.io`, `java.net` and `groovy.lang` are implicit), no `@Grab`, each request is a fresh script with no memory of the previous one. `groovy-json` is often absent; use the Jackson `ObjectMapper` bean.
@@ -65,6 +66,9 @@ curl -X POST -H "Content-Type: text/groovy" -H "X-Console-Verify: $CONSOLE_HEADE
 ```bash
 # Is the console reachable and enabled?
 python3 ${CLAUDE_SKILL_DIR}/scripts/console.py --env development --host apiHost --check
+
+# Which variables can a script use? (GET /console/dsl/text)
+python3 ${CLAUDE_SKILL_DIR}/scripts/console.py --env development --host apiHost --bindings
 
 # Run a Groovy file
 python3 ${CLAUDE_SKILL_DIR}/scripts/console.py --env development --host apiHost probe.groovy
@@ -95,11 +99,12 @@ Executions are audited (`AuditService`, SLF4J by default, often forwarded to mon
 
 Recipes for every step are in [references/script-patterns.md](references/script-patterns.md).
 
-1. **Find the seam in code**: which bean, repository, cache or queue holds the state you need to see. `ctx.getBean(Type)` for singletons, `ctx.getBean(Type, Qualifiers.byName('name'))` for named beans, `ctx.containsBean(Type)` when a bean is conditional.
-2. **Write a probe** that prints the state as JSON. Add `ctx.environment.activeNames` and the relevant `ctx.environment.getProperty('key', String)` when configuration is part of the question.
-3. **Run it against the environment the experiment lives on**, capture the output, compare with the expected values from the ticket or the code change.
-4. **Exercise the behaviour** if reading is not enough: call the service method, send the message, run the job, then re-run the probe.
-5. **Report** with the real values, the environment, the host and the time, so the result is reproducible. Do not paraphrase numbers.
+1. **Check the console and its bindings**: `--check`, then `--bindings`. A binding the application already provides (a service, a repository, a tenant) is the shortest path; fall back to `ctx.getBean(Type)` for singletons, `ctx.getBean(Type, Qualifiers.byName('name'))` for named beans, `ctx.containsBean(Type)` when a bean is conditional.
+2. **Find the seam in code**: which bean, repository, cache or queue holds the state you need to see.
+3. **Write a probe** that returns the state as a `Map` or `List` and run it with `--json`, so the values can be compared mechanically before and after. Print with `println` only when the output is for a human. Add `ctx.environment.activeNames` and the relevant `ctx.environment.getProperty('key', String)` when configuration is part of the question.
+4. **Run it against the environment the experiment lives on**, capture the output, compare with the expected values from the ticket or the code change.
+5. **Exercise the behaviour** if reading is not enough: call the service method, send the message, run the job, then re-run the probe.
+6. **Report** with the real values, the environment, the host and the time, so the result is reproducible. Do not paraphrase numbers.
 
 ## Writing a reusable script
 

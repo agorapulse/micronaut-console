@@ -123,6 +123,7 @@ def main():
     parser.add_argument("--path", default="/console", help="console base path (console.path property, default /console)")
     parser.add_argument("--json", action="store_true", help="call /console/execute and print the JSON response")
     parser.add_argument("--check", action="store_true", help="send println 'console ok' instead of a script")
+    parser.add_argument("--bindings", action="store_true", help="GET /console/dsl/text: list the variables available to scripts")
     parser.add_argument("--dry-run", action="store_true", help="print the request instead of sending it")
     parser.add_argument("--timeout", type=int, default=600, help="socket timeout in seconds")
     args = parser.parse_args()
@@ -184,6 +185,9 @@ def main():
     if "{{" in headers.get("Authorization", ""):
         sys.exit("unresolved variable in Authorization header; pass --bearer or $CONSOLE_TOKEN")
 
+    if args.bindings:
+        return fetch(f"{url}{args.path}/dsl/text", {k: v for k, v in headers.items() if k.lower() != "content-type"}, None, args)
+
     if args.check:
         body = "println 'console ok'\n''\n"
     elif body is None:
@@ -193,17 +197,23 @@ def main():
 
     endpoint = f"{url}{args.path}/execute" + ("" if args.json else "/result")
     headers["Accept"] = "application/json" if args.json else "text/plain"
+    return fetch(endpoint, headers, body, args)
 
+
+def fetch(endpoint, headers, body, args):
+    method = "POST" if body is not None else "GET"
     if args.dry_run:
-        print(f"POST {endpoint}")
+        print(f"{method} {endpoint}")
         for key, value in headers.items():
             secret = key.lower() in (args.header_name.lower(), "authorization")
             print(f"{key}: {'<redacted>' if secret else value}")
-        print()
-        print(body, end="" if body.endswith("\n") else "\n")
+        if body is not None:
+            print()
+            print(body, end="" if body.endswith("\n") else "\n")
         return 0
 
-    request = urllib.request.Request(endpoint, data=body.encode("utf-8"), headers=headers, method="POST")
+    data = body.encode("utf-8") if body is not None else None
+    request = urllib.request.Request(endpoint, data=data, headers=headers, method=method)
     try:
         with urllib.request.urlopen(request, timeout=args.timeout) as response:
             payload = response.read().decode("utf-8", errors="replace")
@@ -213,6 +223,7 @@ def main():
             400: "script error, see message and echoed script below",
             401: "console disabled, until expired, or address/user not allowed",
             403: f"{args.header_name} missing or wrong",
+            404: "console not on this path, or the DSL generator for that type is missing",
         }.get(error.code, "")
         print(f"HTTP {error.code} {error.reason}" + (f" ({hint})" if hint else ""), file=sys.stderr)
         print(payload)
