@@ -8,3 +8,8 @@ Micronaut Console
 See [Full Documentation][DOCS]
 
 [DOCS]: https://agorapulse.github.io/micronaut-console
+
+## Agent skill
+
+`.claude/skills/micronaut-console/SKILL.md` teaches AI coding agents (Claude Code and compatible tools) how to enable the console, call the endpoints, read the response formats and extend the security hooks. Copy the folder into a consumer project's `.claude/skills/` to give agents working there the same knowledge.
+
